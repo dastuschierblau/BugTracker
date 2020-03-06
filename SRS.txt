@@ -1,0 +1,62 @@
+The program will manage tasks by assigning them to certain user groups.
+
+DATABASE:
+-The database will be a noSQL MongoDB database.
+-Main schemas:
+  -Ticket
+    -Title
+    -Description
+    -Submitter (from User)
+    -Assigned user (from User)
+    -Posted datetime
+    -Updated datetime
+    -Status
+    -Type (category)
+    -Priority
+    -Comments (from Comment),
+
+  -Update
+    -User (from User)
+    -Ticket (from Ticket id)
+    -Updated datetime
+    -Type of change
+
+  -Comment
+    -User
+    -Ticket (from Ticket id)
+    -Message
+    -Date posted
+
+  -User
+    -User role (eg. Admin, developer, etc)
+    -Name
+    -Email
+    -Password
+    
+  -Project
+    -Title
+    -Description
+    -Tickets (from Ticket)
+    -Project Manager (from User)
+    -Assigned users (from User)
+
+USER ROLES: 
+-Admin: can post, edit, or delete projects, manage user roles
+-Project Manager: can post, edit, delete projects, add tickets
+-Developers: can add / edit tickets and comments on them
+-General staff: can post tickets and comment on them, cannot edit a ticket unless they themselves created it.
+
+UTILITIES:
+-Manage users and their roles
+-Add and manage your projects
+-Create ticket for a project
+-Display ticket history of changes to assigned users, ticket status, etc.
+-Display comments on ticket
+-Upload files associated with the ticket (i.e. screencaps)
+
+mongoDB connection string:
+mongodb+srv://emmett:<password>@helpdesk-pgzsq.mongodb.net/test?retryWrites=true&w=majority
+
+USER LOGIN AND REGISTRATION:
+-By default, a new user will be assigned a role of developer
+-The app will allow demo logins for other roles, e.g. admin, project manager, etc.
