@@ -5,8 +5,41 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
 const auth = require('../../middleware/auth');
+const permit = require('../../middleware/permission');
 
 const User = require('../../models/User');
+
+// @route   GET api/users
+// @desc    Get full list of users
+router.get('/', auth, async (req, res) => {
+  try {
+    const users = await User.find().select('-password');
+    res.json(users);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+})
+
+// @route   GET api/users/:user_id
+// @desc    Get user by id
+router.get('/:user_id', auth, async (req, res) => {
+  try {
+    const user = await User.findById( req.params.user_id );
+
+    if(!user) {
+      return res.status(400).json({ msg: 'User not found' });
+    }
+
+    res.json(user);
+  } catch (err) {
+    console.error(err.message);
+    if(err.kind == 'ObjectId') {
+      return res.status(400).json({ msg: 'User not found' });
+    }
+    res.status(500).send('Server Error');
+  }
+});
 
 // @route   POST api/users
 // @desc    Register user
@@ -65,6 +98,21 @@ router.post('/', [
     res.status(500).send('Server error');
   }
 
+});
+
+// Edit role of target user. Only accessible to users with role of 'admin'.
+router.post('/edit', auth, (req, res, next) => {
+  permit(req, res, next, "admin");
+}, async (req, res) => {
+  const { target, value } = req.body;
+  let user = await User.findById(target).select('-password');
+
+  if(user) {
+    user.role = value;
+    await user.save();
+  }
+
+  res.json({ currentUser: req.user, targetUser: user });
 });
 
 

@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { check, validationResult } = require('express-validator');
 const config = require('config');
-const permit = require('../../middleware/permission');
 
 const User = require('../../models/User');
 
@@ -73,10 +72,5 @@ router.post('/', [
 
 });
 
-router.use('/edit', auth, (req, res, next) => {
-  permit(req, res, next, "admin")
-}, (req, res) => {
-  res.json({ currentUser: req.user });
-});
 
 module.exports = router;

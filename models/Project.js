@@ -14,8 +14,8 @@ const ProjectSchema = new mongoose.Schema({
     default: Date.now
   },
   manager: {
-    type: String,
-    required: true
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user'
   }
 });
 
