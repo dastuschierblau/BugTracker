@@ -7,7 +7,6 @@ const { check, validationResult } = require('express-validator');
 const Ticket = require('../../models/Ticket');
 const User = require('../../models/User');
 
-
 // @route    GET api/projects
 // @desc     Get all projects
 // @access   All
@@ -25,16 +24,16 @@ router.get('/', auth, async (req, res) => {
 // @desc    Get project by id
 router.get('/:project_id', auth, async (req, res) => {
   try {
-    const project = await Project.findById( req.params.project_id );
+    const project = await Project.findById(req.params.project_id);
 
-    if(!project) {
+    if (!project) {
       return res.status(400).json({ msg: 'Project not found' });
     }
 
     res.json(project);
   } catch (err) {
     console.error(err.message);
-    if(err.kind == 'ObjectId') {
+    if (err.kind == 'ObjectId') {
       return res.status(400).json({ msg: 'Project not found' });
     }
     res.status(500).send('Server Error');
@@ -44,81 +43,118 @@ router.get('/:project_id', auth, async (req, res) => {
 // @route   POST api/projects
 // @desc    Add a project
 // @access  Only admins and project managers may add projects.
-router.post('/', 
+router.post(
+  '/',
   [
-    check('name', 'Name is required').not().isEmpty(),
-    check('description', 'Description is required').not().isEmpty()
-  ],  
-  auth, 
+    check('name', 'Name is required')
+      .not()
+      .isEmpty(),
+    check('description', 'Description is required')
+      .not()
+      .isEmpty()
+  ],
+  auth,
   (req, res, next) => {
-  permit(req, res, next, "admin", "manager");
-},
-async (req, res) => {
-  const errors = validationResult(req);
-  if(!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    permit(req, res, next, 'admin', 'manager');
+  },
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { name, description } = req.body;
+    const manager = req.user.id;
+
+    let project = new Project({
+      name,
+      description,
+      manager
+    });
+
+    try {
+      await project.save();
+
+      res.json(project);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
   }
-  
-  const { name, description } = req.body;
-  const manager = req.user.id;
-
-  let project = new Project ({
-    name,
-    description,
-    manager
-  });
-
-  try {
-    await project.save();
-
-    res.json(project);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
-  }
-  
-});
+);
 
 // @route   DELETE api/projects/:project_id
-// @desc    Delete a project
+// @desc    Delete a project and associated tickets.
 // @access  Only admins and project managers may delete projects.
-router.delete('/:project_id', auth, (req, res, next) => {
-  permit(req, res, next, "admin", "manager");
-}, async (req,res) => {
-  try {
-    await Project.findOneAndRemove({ _id: req.params.project_id });
+router.delete(
+  '/:project_id',
+  auth,
+  (req, res, next) => {
+    permit(req, res, next, 'admin', 'manager');
+  },
+  async (req, res) => {
+    const projectId = req.params.project_id;
 
-    res.json({ msg: 'Project deleted' });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    let isAdmin = res.locals.isAdmin;
+
+    // Check whether user is either an admin or is a project manager who is assigned to / created this project.
+    // If user is project manager who did not create this project, they will not be permitted to delete it.
+    try {
+      let project = await Project.findById(projectId);
+
+      if (isAdmin || project.manager === req.user.id) {
+        try {
+          await Ticket.deleteMany({ project: projectId });
+          await Project.findOneAndRemove({ _id: projectId });
+
+          res.json({ msg: 'Project and tickets deleted' });
+        } catch (err) {
+          console.error(err.message);
+          res.status(500).send('Server Error');
+        }
+      } else {
+        res.status(403).json({ msg: 'Forbidden' });
+      }
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
   }
-});
+);
 
 // @route   POST api/projects/:project_id
 // @desc    Create a new ticket
 // @access  Admin, project managers, and developers
-router.post('/:project_id', 
+router.post(
+  '/:project_id',
   [
-    check('description').not().isEmpty(),
-    check('priority').not().isEmpty(),
-    check('assignedTo').not().isEmpty(),
-    check('category').not().isEmpty(),
+    check('description')
+      .not()
+      .isEmpty(),
+    check('priority')
+      .not()
+      .isEmpty(),
+    check('assignedTo')
+      .not()
+      .isEmpty(),
+    check('category')
+      .not()
+      .isEmpty()
   ],
-  auth, 
+  auth,
   (req, res, next) => {
-    permit(req, res, next, "admin", "manager", "developer");
+    permit(req, res, next, 'admin', 'manager', 'developer');
   },
   async (req, res) => {
     const errors = validationResult(req);
-    if(!errors.isEmpty()) {
+    if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
     const { description, category, assignedTo, priority, date } = req.body;
     const project = req.params.project_id;
     const submittedBy = req.user.id;
-    
+
     let ticketFields = {
       description,
       project,
@@ -130,16 +166,17 @@ router.post('/:project_id',
       history: []
     };
 
-    if(req.body.comments) {
+    if (req.body.comments) {
       ticketFields.comments = req.body.comments;
     }
 
     ticketFields.history.push({
       user: submittedBy,
-      description: "Created ticket."
+      description: `Created ticket with initial settings: 
+      Category: ${category}, Assigned to: ${assignedTo}, Priority: ${priority}`
     });
 
-    let ticket = new Ticket (ticketFields);
+    let ticket = new Ticket(ticketFields);
 
     try {
       await ticket.save();
@@ -149,7 +186,8 @@ router.post('/:project_id',
       console.error(err.message);
       res.status(500).send('Server Error');
     }
-  });
+  }
+);
 
 // @route   GET api/projects/:project_id/tickets
 // @desc    Get all tickets for a given project
@@ -165,7 +203,6 @@ router.get('/:project_id/tickets', auth, async (req, res) => {
     console.error(err.message);
     res.status(500).send('Server Error');
   }
-
 });
 
 // @route   GET api/projects/:project_id/tickets/:ticket_id
@@ -187,9 +224,11 @@ router.get('/:project_id/tickets/:ticket_id', auth, async (req, res) => {
 // @route  PUT api/projects/:project_id/tickets/:ticket_id
 // @desc   Edit a ticket
 // @access Admin, project manager
-router.put('/:project_id/tickets/:ticket_id', auth,
+router.put(
+  '/:project_id/tickets/:ticket_id',
+  auth,
   (req, res, next) => {
-    permit(req, res, next, "admin", "manager");
+    permit(req, res, next, 'admin', 'manager', 'developer');
   },
   async (req, res) => {
     const user = req.user.id,
@@ -205,7 +244,7 @@ router.put('/:project_id/tickets/:ticket_id', auth,
           description: `Changed status to ${req.body.status}`
         });
       }
-  
+
       if (req.body.priority) {
         ticket.priority = req.body.priority;
         ticket.history.push({
@@ -213,11 +252,11 @@ router.put('/:project_id/tickets/:ticket_id', auth,
           description: `Changed priority to ${req.body.priority}`
         });
       }
-  
+
       if (req.body.assignedTo) {
         try {
           let assignedUser = await User.findById(req.body.assignedTo);
-  
+
           ticket.assignedTo = assignedUser;
           ticket.history.push({
             user,
@@ -228,33 +267,89 @@ router.put('/:project_id/tickets/:ticket_id', auth,
           res.status(500).send('Server Error');
         }
       }
-  
+
       if (req.body.category) {
         ticket.category = req.body.category;
         ticket.history.push({
           user,
           description: `Changed category of ticket to ${req.body.category}`
-        })
-      }
-      
-      // Add comment if a comment was included in request:
-      if (req.body.comment) {
-        ticket.comments.push(req.body.comment);
-        ticket.history.push({
-          user,
-          description: `Added a comment.`
         });
       }
-  
-      await ticket.save();
-  
-      res.json(ticket);
 
+      await ticket.save();
+
+      res.json(ticket);
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
     }
+  }
+);
 
+// @route  PUT api/projects/:project_id/tickets/:ticket_id/comments
+// @desc   Add a comment to a ticket
+// @access All
+router.put(
+  '/:project_id/tickets/:ticket_id/comments',
+  [
+    check('text')
+      .not()
+      .isEmpty()
+  ],
+  auth,
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const user = req.user.id,
+      ticketId = req.params.ticket_id;
+
+    try {
+      let ticket = await Ticket.findById(ticketId);
+
+      let comment = {
+        user,
+        text: req.body.text
+      };
+
+      ticket.comments.push(comment);
+      ticket.history.push({
+        user,
+        description: `Added a comment.`
+      });
+
+      await ticket.save();
+
+      res.json(ticket);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
+
+// @route    DELETE api/projects/:project_id/tickets/:ticket_id
+// @desc     Delete a ticket
+// @access   Admin and project managers
+router.delete(
+  '/:project_id/tickets/:ticket_id',
+  auth,
+  (req, res, next) => {
+    permit(req, res, next, 'admin', 'manager');
+  },
+  async (req, res) => {
+    let ticketId = req.params.ticket_id;
+
+    try {
+      await Ticket.findOneAndRemove({ _id: ticketId });
+
+      res.json('Ticket deleted');
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
   }
 );
 
