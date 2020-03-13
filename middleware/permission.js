@@ -10,7 +10,9 @@ module.exports = async function permit(req, res, next, ...allowed) {
     const user = await User.findById(req.user.id);
 
     if (req.user && isAllowed(user.role)) {
-      // Set local variable to be passed on via next for use in subsequent function.
+      // Set local variable isAdmin to be passed on via next for use in subsequent function.
+      // This will allow override of certain access restrictions such that they do not apply to an admin.
+      // For use in routes / functionality that do allow other user types to utilize them, but only under certain conditions.
       let isAdmin = user.role === 'admin' ? true : false;
       res.locals.isAdmin = isAdmin;
       next();

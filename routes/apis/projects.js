@@ -113,7 +113,9 @@ router.delete(
           res.status(500).send('Server Error');
         }
       } else {
-        res.status(403).json({ msg: 'Forbidden' });
+        res.status(403).json({
+          msg: 'Only admins or owners of a project may delete a project.'
+        });
       }
     } catch (err) {
       console.error(err.message);
@@ -223,7 +225,7 @@ router.get('/:project_id/tickets/:ticket_id', auth, async (req, res) => {
 
 // @route  PUT api/projects/:project_id/tickets/:ticket_id
 // @desc   Edit a ticket
-// @access Admin, project manager
+// @access Admin, project manager, developer
 router.put(
   '/:project_id/tickets/:ticket_id',
   auth,
