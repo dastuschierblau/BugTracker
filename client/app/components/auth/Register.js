@@ -1,10 +1,12 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
+import { connect } from 'react-redux';
+import { setAlert } from '../../actions/alert';
+import { register } from '../../actions/auth';
+import Alert from '../layout/Alert';
 
-const baseUrl = process.env.NEXT_STATIC_BASE_URL || 'http://localhost:5000';
-
-class Login extends React.Component {
+class Register extends React.Component {
   constructor(props) {
     super(props);
 
@@ -38,28 +40,22 @@ class Login extends React.Component {
         password
       };
 
-      try {
-        const config = {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        };
-
-        const body = JSON.stringify(newUser);
-
-        const res = await axios.post(`${baseUrl}/api/users`, body, config);
-
-        console.log(res.data);
-      } catch (err) {
-        console.error(err.response.data);
-      }
+      this.props.register(newUser);
+    } else {
+      this.props.setAlert('Passwords do not match', 'danger');
     }
   }
 
   render() {
+    // Redirect if logged in
+    if (this.props.isAuthenticated) {
+      return <Redirect to='/dashboard' />;
+    }
+
     return (
       <div className='landing'>
         <div className='landing-inner d-flex flex-column align-items-center justify-content-center'>
+          <Alert />
           <div className='card shadow no-border mb-4'>
             <div className='card-header bg-primary'>
               <h1 className='h1 text-white mb-3 font-weight-bold text-center'>
@@ -72,8 +68,8 @@ class Login extends React.Component {
                 className='form login-form mb-4'
               >
                 <div className='form-group login-input'>
-                  <label>Name</label>
                   <input
+                    className='form-control'
                     type='text'
                     name='name'
                     value={this.state.name}
@@ -82,8 +78,8 @@ class Login extends React.Component {
                   />
                 </div>
                 <div className='form-group login-input'>
-                  <label>Email</label>
                   <input
+                    className='form-control'
                     type='text'
                     name='email'
                     value={this.state.email}
@@ -92,18 +88,18 @@ class Login extends React.Component {
                   />
                 </div>
                 <div className='form-group login-input'>
-                  <label>Password</label>
                   <input
+                    className='form-control'
                     type='password'
                     name='password'
                     value={this.state.password}
                     onChange={this.handleChange}
-                    placeholder='password'
+                    placeholder='Password'
                   />
                 </div>
                 <div className='form-group login-input'>
-                  <label>Confirm Password</label>
                   <input
+                    className='form-control'
                     type='password'
                     name='password2'
                     value={this.state.password2}
@@ -121,7 +117,7 @@ class Login extends React.Component {
               </form>
               <div className='d-flex flex-column justify-center text-center'>
                 <div className='mb-2'>Already have an account?</div>
-                <Link to='/login' className='btn btn-success'>
+                <Link to='/login' className='btn btn-primary'>
                   Log In
                 </Link>
               </div>
@@ -149,4 +145,8 @@ class Login extends React.Component {
   }
 }
 
-export default Login;
+const mapStateToProps = state => ({
+  isAuthenticated: state.auth.isAuthenticated
+});
+
+export default connect(mapStateToProps, { setAlert, register })(Register);

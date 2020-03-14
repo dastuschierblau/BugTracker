@@ -1,6 +1,12 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { login } from '../../actions/auth';
+import { setAlert } from '../../actions/alert';
+import Alert from '../layout/Alert';
+import { SET_ALERT } from '../../actions/types';
 
 const baseUrl = process.env.NEXT_STATIC_BASE_URL || 'http://localhost:5000';
 
@@ -34,26 +40,22 @@ class Login extends React.Component {
     };
 
     try {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      };
-
-      const body = JSON.stringify(user);
-
-      const res = await axios.post(`${baseUrl}/api/auth`, body, config);
-
-      console.log(res.data);
+      this.props.login(user);
     } catch (err) {
-      console.error(err.response.data);
+      this.props.setAlert('Invalid Credentials', 'danger');
     }
   }
 
   render() {
+    // Redirect if logged in
+    if (this.props.isAuthenticated) {
+      return <Redirect to='/dashboard' />;
+    }
+
     return (
       <div className='landing'>
         <div className='landing-inner d-flex flex-column align-items-center justify-content-center'>
+          <Alert />
           <div className='card shadow no-border mb-4'>
             <div className='card-header bg-primary'>
               <h1 className='h1 text-white mb-3 font-weight-bold text-center'>
@@ -66,8 +68,8 @@ class Login extends React.Component {
                 className='form login-form mb-4'
               >
                 <div className='form-group login-input'>
-                  <label>Email</label>
                   <input
+                    className='form-control'
                     type='text'
                     name='email'
                     value={this.state.email}
@@ -76,13 +78,13 @@ class Login extends React.Component {
                   />
                 </div>
                 <div className='form-group login-input'>
-                  <label>Password</label>
                   <input
+                    className='form-control'
                     type='password'
                     name='password'
                     value={this.state.password}
                     onChange={this.handleChange}
-                    placeholder='password'
+                    placeholder='Password'
                   />
                 </div>
                 <div className='form-group'>
@@ -95,7 +97,7 @@ class Login extends React.Component {
               </form>
               <div className='d-flex flex-column justify-center text-center'>
                 <div className='mb-2'>Don't have an account?</div>
-                <Link to='/register' className='btn btn-success'>
+                <Link to='/register' className='btn btn-primary'>
                   Create an Account
                 </Link>
               </div>
@@ -123,4 +125,14 @@ class Login extends React.Component {
   }
 }
 
-export default Login;
+Login.propTypes = {
+  login: PropTypes.func.isRequired,
+  setAlert: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool
+};
+
+const mapStateToProps = state => ({
+  isAuthenticated: state.auth.isAuthenticated
+});
+
+export default connect(mapStateToProps, { setAlert, login })(Login);

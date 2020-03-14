@@ -11404,6 +11404,7 @@ body.sidebar-toggled footer.sticky-footer {
 }
 
 /* Emmett's Styles */
+
 .landing {
   position: relative;
   height: 100vh;
@@ -11433,9 +11434,6 @@ body.sidebar-toggled footer.sticky-footer {
 .login-input {
   display: flex;
   justify-content: space-between;
-}
-.login-input > * {
-  padding: 0 15px;
 }
 
 .demo-user {
