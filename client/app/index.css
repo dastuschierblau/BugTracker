@@ -11432,7 +11432,7 @@ body.sidebar-toggled footer.sticky-footer {
 
 .login-input {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
 }
 .login-input > * {
   padding: 0 15px;
