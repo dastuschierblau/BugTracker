@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { logout } from '../../actions/auth';
 
 class Topbar extends React.Component {
   render() {
@@ -11,17 +14,20 @@ class Topbar extends React.Component {
         >
           <i className='fa fa-bars'></i>
         </button>
-
         {/* Topbar Navbar */}
         <ul className='navbar-nav ml-auto'>
           <div className='topbar-divider d-none d-sm-block'></div>
 
           {/* Nav Item - User Information */}
           <li className='nav-item nav-link'>
-            <span className='mr-2  text-gray-600 small'>Toby Slack</span>
+            <span className='mr-2  text-gray-600 small'>
+              {this.props.user !== null && this.props.user.name}
+            </span>
           </li>
           <li className='nav-item'>
-            <button className='btn btn-success'>Logout</button>
+            <button className='btn btn-success' onClick={this.props.logout}>
+              Logout
+            </button>
           </li>
         </ul>
       </nav>
@@ -29,4 +35,8 @@ class Topbar extends React.Component {
   }
 }
 
-export default Topbar;
+const mapStateToProps = state => ({
+  user: state.auth.user
+});
+
+export default connect(mapStateToProps, { logout })(Topbar);

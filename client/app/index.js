@@ -7,6 +7,7 @@ import Dashboard from './components/layout/Dashboard';
 import Sidebar from './components/layout/Sidebar';
 import Landing from './components/layout/Landing';
 import setAuthToken from './utils/setAuthToken';
+import PrivateRoute from './components/routing/PrivateRoute';
 // Redux
 import { Provider } from 'react-redux';
 import store from './store';
@@ -32,7 +33,7 @@ class App extends React.Component {
             <Switch>
               <Route exact path='/register' component={Register} />
               <Route exact path='/login' component={Login} />
-              <Route exact path='/dashboard' component={Dashboard} />
+              <PrivateRoute exact path='/dashboard' component={Dashboard} />
             </Switch>
           </Fragment>
         </Router>
