@@ -61,3 +61,6 @@ USER LOGIN AND REGISTRATION:
 -By default, a new user will be assigned a role of developer
 -The app will allow demo logins for other roles, e.g. admin, project manager, etc.
 
+TODOS BEFORE DEPLOYMENT:
+-Edit token expiration to be an hour
+-Remove baseUrl absolute paths from axios requests

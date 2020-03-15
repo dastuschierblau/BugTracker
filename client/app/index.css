@@ -11443,6 +11443,8 @@ body.sidebar-toggled footer.sticky-footer {
   padding: 15px 0;
   border-radius: 5px;
   color: #fafafa;
+  background: transparent;
+  border: none;
 }
 
 .demo-user:hover {
@@ -11484,6 +11486,11 @@ body.sidebar-toggled footer.sticky-footer {
 .collapse-nav > .collapse-item:hover {
   cursor: pointer;
   background-color: #403075;
+}
+
+.collapse-nav .fab,
+.fas {
+  color: #fafafa;
 }
 
 .add-comment {
@@ -11530,12 +11537,33 @@ body.sidebar-toggled footer.sticky-footer {
 }
 
 @media (max-width: 600px) {
+  .container-fluid {
+    margin-top: 70px;
+  }
+
   .sidebar {
     display: none;
   }
 
   .toggle-collapse {
     display: none;
+  }
+
+  .topnav {
+    position: fixed;
+    z-index: 1;
+    width: 100vw;
+  }
+
+  .collapse-nav {
+    display: none;
+  }
+  .collapse-nav.active {
+    display: block;
+    position: absolute;
+    top: 70px;
+    z-index: 1;
+    height: 100vh;
   }
 }
 

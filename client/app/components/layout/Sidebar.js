@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 function Sidebar() {
   return (
@@ -20,10 +21,10 @@ function Sidebar() {
 
       {/* Nav Item - Dashboard */}
       <li className='nav-item active'>
-        <a className='nav-link' href='index.html'>
+        <Link className='nav-link' to='/dashboard'>
           <i className='fas fa-fw fa-tachometer-alt'></i>
           <span>Dashboard</span>
-        </a>
+        </Link>
       </li>
 
       {/* Divider */}
@@ -31,15 +32,15 @@ function Sidebar() {
 
       {/* Nav Item - Pages Collapse Menu */}
       <li className='nav-item'>
-        <a className='nav-link' href='users.html'>
+        <Link className='nav-link' to='/users'>
           <i className='fas fa-fw fa-cog'></i>
           <span>Users</span>
-        </a>
+        </Link>
       </li>
 
       {/* Nav Item - Utilities Collapse Menu */}
       <li className='nav-item'>
-        <a className='nav-link' href='#'>
+        <a className='nav-link' to='#'>
           <i className='fas fa-fw fa-wrench'></i>
           <span>Manage Users</span>
         </a>
@@ -47,7 +48,7 @@ function Sidebar() {
 
       {/* Nav Item - Pages Collapse Menu */}
       <li className='nav-item'>
-        <a className='nav-link' href='#'>
+        <a className='nav-link' to='#'>
           <i className='fas fa-fw fa-folder'></i>
           <span>Projects</span>
         </a>

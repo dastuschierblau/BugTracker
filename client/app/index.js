@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Dashboard from './components/layout/Dashboard';
-import Sidebar from './components/layout/Sidebar';
+import Users from './components/layout/Users';
 import Landing from './components/layout/Landing';
 import setAuthToken from './utils/setAuthToken';
 import PrivateRoute from './components/routing/PrivateRoute';
@@ -34,6 +34,7 @@ class App extends React.Component {
               <Route exact path='/register' component={Register} />
               <Route exact path='/login' component={Login} />
               <PrivateRoute exact path='/dashboard' component={Dashboard} />
+              <PrivateRoute exact path='/users' component={Users} />
             </Switch>
           </Fragment>
         </Router>

@@ -3,7 +3,8 @@ import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import { setAlert } from '../../actions/alert';
-import { register } from '../../actions/auth';
+import { register, login } from '../../actions/auth';
+import { useDemoUser } from '../../utils/useDemoUser';
 import Alert from '../layout/Alert';
 
 class Register extends React.Component {
@@ -129,14 +130,14 @@ class Register extends React.Component {
               Or choose a demo account:
             </h3>
             <div className='row'>
-              <div className='col-md-6 demo-user'>
+              <button className='col-md-6 demo-user'>
                 <i className='fas fa-user mb-2'></i>
                 <h6>Project Manager</h6>
-              </div>
-              <div className='col-md-6 demo-user'>
+              </button>
+              <button className='col-md-6 demo-user'>
                 <i className='fas fa-user mb-2'></i>
                 <h6>Developer</h6>
-              </div>
+              </button>
             </div>
           </div>
         </div>
@@ -149,4 +150,6 @@ const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated
 });
 
-export default connect(mapStateToProps, { setAlert, register })(Register);
+export default connect(mapStateToProps, { setAlert, register, login })(
+  Register
+);
