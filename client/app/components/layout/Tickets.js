@@ -1,12 +1,19 @@
-import React from 'react';
-import { Redirect } from 'react-router-dom';
+import React, { Fragment } from 'react';
+import { Redirect, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { getTickets } from '../../actions/tickets';
 import { setProject } from '../../actions/projects';
+import CreateTicket from '../create-forms/CreateTicket';
 
 class Tickets extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      addTicket: false
+    };
+
+    this.toggleTicket = this.toggleTicket.bind(this);
   }
 
   componentDidMount() {
@@ -14,6 +21,12 @@ class Tickets extends React.Component {
 
     this.props.setProject(projectId);
     this.props.getTickets(projectId);
+  }
+
+  toggleTicket() {
+    this.setState(prevState => ({
+      addTicket: !prevState.addTicket
+    }));
   }
 
   render() {
@@ -34,53 +47,77 @@ class Tickets extends React.Component {
         </div>
 
         {!this.props.tickets.loading && (
-          <div className='card'>
-            <div className='card-header bg-gradient-purple'>Tickets:</div>
-            <div className='card-body'>
-              <div className='table-responsive'>
-                <table
-                  className='table table-bordered'
-                  id='dataTable'
-                  width='100%'
-                  cellSpacing='0'
-                >
-                  <thead>
-                    <tr>
-                      <th>Category</th>
-                      <th className='toggle-collapse'>Description</th>
-                      <th>Assigned To</th>
-                      <th>Priority</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tfoot>
-                    <tr>
-                      <th>Category</th>
-                      <th className='toggle-collapse'>Description</th>
-                      <th>Assigned To</th>
-                      <th>Priority</th>
-                      <th>Status</th>
-                    </tr>
-                  </tfoot>
-                  <tbody>
-                    {this.props.tickets.tickets.map(ticket => {
-                      return (
-                        <tr key={ticket._id}>
-                          <td>{ticket.category}</td>
-                          <td className='toggle-collapse'>
-                            {ticket.description}
-                          </td>
-                          <td>{ticket.assignedTo}</td>
-                          <td>{ticket.priority}</td>
-                          <td>{ticket.status}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+          <Fragment>
+            <div className='card mb-4'>
+              <div className='card-header bg-gradient-purple'>Tickets:</div>
+              <div className='card-body'>
+                <div className='table-responsive'>
+                  <table
+                    className='table table-bordered'
+                    id='dataTable'
+                    width='100%'
+                    cellSpacing='0'
+                  >
+                    <thead>
+                      <tr>
+                        <th>Category</th>
+                        <th className='toggle-collapse'>Description</th>
+                        <th>Assigned To</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tfoot>
+                      <tr>
+                        <th>Category</th>
+                        <th className='toggle-collapse'>Description</th>
+                        <th>Assigned To</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th></th>
+                      </tr>
+                    </tfoot>
+                    <tbody>
+                      {this.props.tickets.tickets.map(ticket => {
+                        return (
+                          <tr key={ticket._id}>
+                            <td>{ticket.category}</td>
+                            <td className='toggle-collapse'>
+                              {ticket.description}
+                            </td>
+                            <td>{ticket.assignedTo}</td>
+                            <td>{ticket.priority}</td>
+                            <td>{ticket.status}</td>
+                            <td>
+                              <Link
+                                to={{
+                                  pathname: `/tickets/${ticket._id}`,
+                                  state: {
+                                    project: this.props.match.params.projectId
+                                  }
+                                }}
+                              >
+                                <i className='fas fa-arrow-right text-success'></i>
+                              </Link>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
-          </div>
+
+            <button className='btn btn-success' onClick={this.toggleTicket}>
+              Add Ticket
+            </button>
+
+            {this.state.addTicket && (
+              <CreateTicket toggle={this.toggleTicket} />
+            )}
+          </Fragment>
         )}
       </div>
     );

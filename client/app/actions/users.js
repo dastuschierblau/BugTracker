@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { GET_USERS, LOAD_ERROR, EDIT_USER } from './types';
+import { setAlert } from './alert';
 
 const baseUrl = process.env.NEXT_STATIC_BASE_URL || 'http://localhost:5000';
 

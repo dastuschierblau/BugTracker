@@ -54,22 +54,17 @@ class Topbar extends React.Component {
           className={`bg-primary py-2 collapse-inner rounded navbar-nav collapse-nav ${this.state.toggleMenu}`}
         >
           <li className='collapse-item'>
-            <a className='collapse-item btn text-white' href='index.html'>
+            <a className='collapse-item btn text-white' href='/dashboard'>
               Dashboard
             </a>
           </li>
           <li className='collapse-item'>
-            <a className='collapse-item btn text-white' href='users.html'>
+            <a className='collapse-item btn text-white' href='/users'>
               Users
             </a>
           </li>
           <li className='collapse-item'>
-            <a className='collapse-item btn text-white' href='index.html'>
-              Manage Users
-            </a>
-          </li>
-          <li className='collapse-item'>
-            <a className='collapse-item btn text-white' href='index.html'>
+            <a className='collapse-item btn text-white' href='/projects'>
               Projects
             </a>
           </li>

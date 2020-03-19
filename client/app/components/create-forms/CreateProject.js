@@ -2,7 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Navbar from '../layout/Navbar';
-import Loading from '../layout/Loading';
+import Alert from '../layout/Alert';
 import { createProject } from '../../actions/projects';
 
 class CreateProject extends React.Component {
@@ -47,6 +47,7 @@ class CreateProject extends React.Component {
               <h1>Create a Project</h1>
             </div>
             <div className='card-body'>
+              <Alert />
               <form action='post' className='form'>
                 <div className='form-group'>
                   <label htmlFor='name'>Name:</label>
@@ -83,4 +84,10 @@ class CreateProject extends React.Component {
   }
 }
 
-export default connect(null, { createProject })(withRouter(CreateProject));
+const mapStateToProps = state => ({
+  user: state.auth.user
+});
+
+export default connect(mapStateToProps, { createProject })(
+  withRouter(CreateProject)
+);

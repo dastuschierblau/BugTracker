@@ -65,6 +65,7 @@ class Projects extends React.Component {
                   to='/create-project'
                   onClick={this.checkAuthorized}
                   className='d-flex justify-content-center align-items-center mb-3 btn btn-success'
+                  style={{ width: '50%', margin: '0 auto' }}
                 >
                   Add a Project
                 </Link>

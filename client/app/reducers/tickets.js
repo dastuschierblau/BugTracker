@@ -1,4 +1,4 @@
-import { GET_TICKETS, TICKETS_ERROR } from '../actions/types';
+import { GET_TICKETS, TICKETS_ERROR, CREATE_TICKET } from '../actions/types';
 
 let initialState = {
   loading: true,
@@ -15,6 +15,12 @@ export default function tickets(state = initialState, action) {
       return {
         ...state,
         tickets: [...payload],
+        loading: false
+      };
+    case CREATE_TICKET:
+      return {
+        ...state,
+        tickets: state.tickets.concat([payload]),
         loading: false
       };
     case TICKETS_ERROR:

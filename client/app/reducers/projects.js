@@ -2,7 +2,8 @@ import {
   GET_PROJECTS,
   PROJECTS_ERROR,
   CREATE_PROJECT,
-  SET_PROJECT
+  SET_PROJECT,
+  LOGOUT
 } from '../actions/types';
 
 let initialState = {
@@ -39,6 +40,11 @@ export default function projects(state = initialState, action) {
         ...state,
         loading: false,
         error: payload
+      };
+    case LOGOUT:
+      return {
+        ...state,
+        project: null
       };
     default:
       return state;

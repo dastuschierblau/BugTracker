@@ -2,6 +2,8 @@ import React from 'react';
 import Navbar from './Navbar';
 import { connect } from 'react-redux';
 import { getUsers, editUser } from '../../actions/users';
+import Alert from './Alert';
+import { setAlert } from '../../actions/alert';
 
 class Users extends React.Component {
   constructor(props) {
@@ -30,6 +32,16 @@ class Users extends React.Component {
 
   changeUserRole(e) {
     e.preventDefault();
+
+    const { currentUser } = this.props;
+
+    if (currentUser.role !== 'admin' && currentUser.role !== 'manager') {
+      e.preventDefault();
+      this.props.setAlert(
+        'Not Authorized. You must be an admin to access this functionality.',
+        'danger'
+      );
+    }
 
     const { user, role } = this.state;
     if (user && role) {
@@ -72,7 +84,9 @@ class Users extends React.Component {
                 <tbody>
                   {loading && (
                     <tr>
-                      <td>LOADING...</td>
+                      <td>
+                        <img src='../../img/loading.gif' alt='Loading...' />
+                      </td>
                     </tr>
                   )}
 
@@ -101,11 +115,13 @@ class Users extends React.Component {
               <div className='card shadow'>
                 <div className='card-header bg-gradient-purple'>Edit User</div>
                 <div className='card-body'>
+                  <Alert />
                   <form action='post'>
                     <div className='form-group d-flex justify-content-between'>
                       <label>User:</label>
                       <select
                         name='user'
+                        className='form-control'
                         defaultValue='none'
                         onChange={this.handleSelect}
                       >
@@ -120,12 +136,14 @@ class Users extends React.Component {
                           );
                         })}
                       </select>
+                    </div>
 
+                    <div className='form-group'>
                       <label className='d-flex align-items-center'>Role:</label>
                       <select
                         name='role'
-                        default
-                        value='none'
+                        defaultValue='none'
+                        className='form-control'
                         onChange={this.handleSelect}
                       >
                         <option value='none' disabled>
@@ -158,7 +176,10 @@ class Users extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  users: state.users
+  users: state.users,
+  currentUser: state.auth.user
 });
 
-export default connect(mapStateToProps, { getUsers, editUser })(Users);
+export default connect(mapStateToProps, { getUsers, editUser, setAlert })(
+  Users
+);

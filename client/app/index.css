@@ -11459,6 +11459,10 @@ body.sidebar-toggled footer.sticky-footer {
   color: #fafafa;
 }
 
+.hidden {
+  height: 0;
+}
+
 .no-border {
   border: none;
 }

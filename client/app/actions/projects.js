@@ -50,11 +50,7 @@ export const createProject = (
 
     history.push('/projects');
   } catch (err) {
-    const errors = err.response.data.errors;
-
-    if (errors) {
-      errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
-    }
+    dispatch(setAlert(err.response.statusText, 'danger'));
 
     dispatch({
       type: PROJECTS_ERROR,

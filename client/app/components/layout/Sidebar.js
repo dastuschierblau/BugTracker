@@ -38,14 +38,6 @@ function Sidebar() {
         </NavLink>
       </li>
 
-      {/* Nav Item - Utilities Collapse Menu */}
-      <li className='nav-item'>
-        <a className='nav-link' to='#'>
-          <i className='fas fa-fw fa-wrench'></i>
-          <span>Manage Users</span>
-        </a>
-      </li>
-
       {/* Nav Item - Pages Collapse Menu */}
       <li className='nav-item'>
         <NavLink className='nav-link' to='/projects'>
