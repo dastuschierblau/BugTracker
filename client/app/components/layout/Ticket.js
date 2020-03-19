@@ -1,5 +1,6 @@
 import React from 'react';
 import Navbar from './Navbar';
+import { connect } from 'react-redux';
 
 class Ticket extends React.Component {
   constructor(props) {
@@ -255,4 +256,4 @@ class Ticket extends React.Component {
   }
 }
 
-export default Ticket;
+export default connect()(Ticket);

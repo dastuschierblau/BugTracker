@@ -1,12 +1,11 @@
 import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { login } from '../../actions/auth';
 import { setAlert } from '../../actions/alert';
 import Alert from '../layout/Alert';
-import { SET_ALERT } from '../../actions/types';
+import useDemoUser from '../../utils/useDemoUser';
 
 const baseUrl = process.env.NEXT_STATIC_BASE_URL || 'http://localhost:5000';
 
@@ -28,6 +27,16 @@ class Login extends React.Component {
 
     this.setState({
       [name]: value
+    });
+  }
+
+  setDemo(role) {
+    const user = useDemoUser(role);
+    const { email, password } = user;
+
+    this.setState({
+      email,
+      password
     });
   }
 
@@ -109,11 +118,17 @@ class Login extends React.Component {
               Or choose a demo account:
             </h3>
             <div className='row'>
-              <div className='col-md-6 demo-user'>
+              <div
+                className='col-md-6 demo-user'
+                onClick={() => this.setDemo('manager')}
+              >
                 <i className='fas fa-user mb-2'></i>
                 <h6>Project Manager</h6>
               </div>
-              <div className='col-md-6 demo-user'>
+              <div
+                className='col-md-6 demo-user'
+                onClick={() => this.setDemo('developer')}
+              >
                 <i className='fas fa-user mb-2'></i>
                 <h6>Developer</h6>
               </div>

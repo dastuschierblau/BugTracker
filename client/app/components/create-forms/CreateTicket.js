@@ -12,8 +12,7 @@ class CreateTicket extends React.Component {
       description: '',
       assignedTo: null,
       category: '',
-      priority: '',
-      status: ''
+      priority: ''
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -35,7 +34,7 @@ class CreateTicket extends React.Component {
   }
 
   handleSubmit(e) {
-    const { description, assignedTo, category, priority, status } = this.state;
+    const { description, assignedTo, category, priority } = this.state;
     const { history } = this.props;
     const { projectId } = this.props.match.params;
 
@@ -44,8 +43,7 @@ class CreateTicket extends React.Component {
       description,
       assignedTo,
       category,
-      priority,
-      status
+      priority
     };
 
     this.props.createTicket(ticket, history, projectId);
@@ -53,7 +51,6 @@ class CreateTicket extends React.Component {
       description: '',
       category: '',
       priority: '',
-      status: '',
       assignedTo: null
     });
 
@@ -65,7 +62,7 @@ class CreateTicket extends React.Component {
       <div className=' my-4'>
         <div className='card shadow no-border mb-4'>
           <div className='card-header bg-primary text-white'>
-            <h1>Create a Ticket</h1>
+            <h4>Create a Ticket</h4>
           </div>
           <div className='card-body'>
             <Alert />
@@ -110,24 +107,6 @@ class CreateTicket extends React.Component {
                   <option name='low'>low</option>
                   <option name='medium'>medium</option>
                   <option name='high'>high</option>
-                </select>
-              </div>
-
-              <div className='form-group'>
-                <select
-                  name='status'
-                  defaultValue='none'
-                  className='form-control'
-                  onChange={this.handleChange}
-                >
-                  <option value='none' disabled>
-                    Select a status (optional)
-                  </option>
-                  <option name='open'>open</option>
-                  <option name='In progress'>In progress</option>
-                  <option name='Waiting for review'>Waiting for review</option>
-                  <option name='Stuck'>Stuck</option>
-                  <option name='Done'>Done</option>
                 </select>
               </div>
 
