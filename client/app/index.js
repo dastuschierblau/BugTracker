@@ -3,8 +3,10 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
+import CreateProject from './components/create-forms/CreateProject';
 import Dashboard from './components/layout/Dashboard';
 import Users from './components/layout/Users';
+import Projects from './components/layout/Projects';
 import Landing from './components/layout/Landing';
 import setAuthToken from './utils/setAuthToken';
 import PrivateRoute from './components/routing/PrivateRoute';
@@ -35,6 +37,12 @@ class App extends React.Component {
               <Route exact path='/login' component={Login} />
               <PrivateRoute exact path='/dashboard' component={Dashboard} />
               <PrivateRoute exact path='/users' component={Users} />
+              <PrivateRoute path='/projects' component={Projects} />
+              <PrivateRoute
+                exact
+                path='/create-project'
+                component={CreateProject}
+              />
             </Switch>
           </Fragment>
         </Router>

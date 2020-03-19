@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 function Sidebar() {
   return (
@@ -21,10 +21,10 @@ function Sidebar() {
 
       {/* Nav Item - Dashboard */}
       <li className='nav-item active'>
-        <Link className='nav-link' to='/dashboard'>
+        <NavLink className='nav-link' to='/dashboard'>
           <i className='fas fa-fw fa-tachometer-alt'></i>
           <span>Dashboard</span>
-        </Link>
+        </NavLink>
       </li>
 
       {/* Divider */}
@@ -32,10 +32,10 @@ function Sidebar() {
 
       {/* Nav Item - Pages Collapse Menu */}
       <li className='nav-item'>
-        <Link className='nav-link' to='/users'>
+        <NavLink className='nav-link' to='/users'>
           <i className='fas fa-fw fa-cog'></i>
           <span>Users</span>
-        </Link>
+        </NavLink>
       </li>
 
       {/* Nav Item - Utilities Collapse Menu */}
@@ -48,10 +48,10 @@ function Sidebar() {
 
       {/* Nav Item - Pages Collapse Menu */}
       <li className='nav-item'>
-        <a className='nav-link' to='#'>
+        <NavLink className='nav-link' to='/projects'>
           <i className='fas fa-fw fa-folder'></i>
           <span>Projects</span>
-        </a>
+        </NavLink>
       </li>
 
       {/* Divider */}

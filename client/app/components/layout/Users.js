@@ -46,7 +46,7 @@ class Users extends React.Component {
     return (
       <Navbar>
         {/* Page Heading */}
-        <div className='d-sm-flex align-items-center justify-content-between mb-4'>
+        <div className='mb-4'>
           <h1 className='h3 my-3'>Users</h1>
         </div>
 
@@ -94,6 +94,7 @@ class Users extends React.Component {
         </div>
         {/* End of card div */}
 
+        {/* Begin Edit User */}
         {!loading && (
           <div className='row mb-5'>
             <div className='col-xl-12 mb-4'>
@@ -103,8 +104,12 @@ class Users extends React.Component {
                   <form action='post'>
                     <div className='form-group d-flex justify-content-between'>
                       <label>User:</label>
-                      <select name='user' onChange={this.handleSelect}>
-                        <option value='none' selected disabled>
+                      <select
+                        name='user'
+                        defaultValue='none'
+                        onChange={this.handleSelect}
+                      >
+                        <option value='none' disabled>
                           Select a User
                         </option>
                         {users.map((item, ind) => {
@@ -117,8 +122,13 @@ class Users extends React.Component {
                       </select>
 
                       <label className='d-flex align-items-center'>Role:</label>
-                      <select name='role' onChange={this.handleSelect}>
-                        <option value='none' selected disabled>
+                      <select
+                        name='role'
+                        default
+                        value='none'
+                        onChange={this.handleSelect}
+                      >
+                        <option value='none' disabled>
                           Select a Role
                         </option>
                         <option value='developer'>Developer</option>
@@ -141,6 +151,7 @@ class Users extends React.Component {
             </div>
           </div>
         )}
+        {/* End Edit User */}
       </Navbar>
     );
   }

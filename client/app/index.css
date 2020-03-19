@@ -1954,6 +1954,8 @@ textarea.form-control {
 
 .form-group {
   margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .form-text {
@@ -11469,6 +11471,15 @@ body.sidebar-toggled footer.sticky-footer {
   bottom: 2rem;
 }
 
+.project:hover > .card-body {
+  background-color: #ddd;
+}
+
+.fa-arrow-right:hover {
+  cursor: pointer;
+  color: var(--success);
+}
+
 .collapse-nav {
   justify-content: space-between;
   align-items: center;
@@ -11506,6 +11517,10 @@ body.sidebar-toggled footer.sticky-footer {
   width: 80%;
   border: 1px solid #4e73df;
   border-radius: 3px;
+}
+
+ul {
+  list-style: none;
 }
 
 .table {
