@@ -11459,8 +11459,9 @@ body.sidebar-toggled footer.sticky-footer {
   color: #fafafa;
 }
 
-.hidden {
-  height: 0;
+.fa-window-close:hover {
+  cursor: pointer;
+  color: var(--danger);
 }
 
 .no-border {
