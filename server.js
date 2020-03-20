@@ -10,6 +10,14 @@ connectDB();
 
 // Init Middleware
 //app.use(cors());
+app.use(helmet());
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ['self', 'favicon.ico']
+    }
+  })
+);
 app.use(express.json({ extended: false }));
 
 // Define routes
