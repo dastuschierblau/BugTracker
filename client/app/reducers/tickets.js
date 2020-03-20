@@ -4,6 +4,8 @@ import {
   CREATE_TICKET,
   SET_TICKET,
   EDIT_TICKET,
+  ADD_COMMENT,
+  COMMENT_ERROR,
   LOGOUT
 } from '../actions/types';
 
@@ -44,7 +46,22 @@ export default function tickets(state = initialState, action) {
         ticket: payload,
         loading: false
       };
+    case ADD_COMMENT:
+      return {
+        ...state,
+        ticket: {
+          ...state.ticket,
+          comments: comments.concat([payload])
+        },
+        loading: false
+      };
     case TICKETS_ERROR:
+      return {
+        ...state,
+        loading: false,
+        error: payload
+      };
+    case COMMENT_ERROR:
       return {
         ...state,
         loading: false,

@@ -20,6 +20,19 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+// @route    GET api/projects/tickets
+// @desc     Get all tickets
+// @access   All
+router.get('/tickets', auth, async (req, res) => {
+  try {
+    const tickets = await Ticket.find();
+    res.json(tickets);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 // @route   GET api/projects/:project_id
 // @desc    Get project by id
 router.get('/:project_id', auth, async (req, res) => {
@@ -288,11 +301,11 @@ router.put(
   }
 );
 
-// @route  PUT api/projects/:project_id/tickets/:ticket_id/comments
+// @route  PUT api/projects/tickets/:ticket_id/comments
 // @desc   Add a comment to a ticket
 // @access All
-router.put(
-  '/:project_id/tickets/:ticket_id/comments',
+router.post(
+  '/tickets/:ticket_id/comments',
   [
     check('text')
       .not()

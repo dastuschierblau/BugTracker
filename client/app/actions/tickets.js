@@ -4,7 +4,9 @@ import {
   TICKETS_ERROR,
   CREATE_TICKET,
   SET_TICKET,
-  EDIT_TICKET
+  EDIT_TICKET,
+  ADD_COMMENT,
+  COMMENT_ERROR
 } from './types';
 import { setAlert } from './alert';
 
@@ -14,6 +16,23 @@ const baseUrl = process.env.NEXT_STATIC_BASE_URL || 'http://localhost:5000';
 export const getTickets = projectId => async dispatch => {
   try {
     let res = await axios.get(`${baseUrl}/api/projects/${projectId}/tickets`);
+
+    dispatch({
+      type: GET_TICKETS,
+      payload: res.data
+    });
+  } catch (err) {
+    dispatch({
+      type: TICKETS_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+// Get all tickets for all projects
+export const getAllTickets = () => async dispatch => {
+  try {
+    let res = await axios.get(`${baseUrl}/api/projects/tickets`);
 
     dispatch({
       type: GET_TICKETS,
@@ -107,6 +126,46 @@ export const createTicket = (
 
     dispatch({
       type: TICKETS_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+// Add a comment to a ticket:
+export const addComment = (ticketId, text) => async dispatch => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+
+  const body = JSON.stringify({ text });
+
+  try {
+    let res = await axios.post(
+      `${baseUrl}/api/projects/tickets/${ticketId}/comments`,
+      body,
+      config
+    );
+
+    console.log(res.data);
+
+    dispatch({
+      type: ADD_COMMENT,
+      payload: res.data
+    });
+
+    dispatch(setAlert('Comment Added', 'success'));
+
+    dispatch({
+      type: SET_TICKET,
+      payload: res.data
+    });
+  } catch (err) {
+    dispatch(setAlert(err.response.statusText, 'danger'));
+
+    dispatch({
+      type: COMMENT_ERROR,
       payload: { msg: err.response.statusText, status: err.response.status }
     });
   }

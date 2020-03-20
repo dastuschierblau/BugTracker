@@ -2,7 +2,12 @@ import React, { Fragment } from 'react';
 import Navbar from './Navbar';
 import Alert from './Alert';
 import { connect } from 'react-redux';
-import { getTickets, setTicket, editTicket } from '../../actions/tickets';
+import {
+  getTickets,
+  setTicket,
+  editTicket,
+  addComment
+} from '../../actions/tickets';
 import { Redirect } from 'react-router-dom';
 
 function EditTicket({ handleChange, toggle, handleSubmit, values }) {
@@ -106,55 +111,78 @@ function EditTicket({ handleChange, toggle, handleSubmit, values }) {
   );
 }
 
-function History({ ticket }) {
+function History({ ticket, loading }) {
   return (
-    <div className='col-lg-8 mb-4'>
-      <div className='card shadow'>
-        <div className='card-header bg-gradient-purple'>History</div>
-        <div className='card-body'>
-          <p>
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Tempora
-            voluptas officia voluptate omnis error minus rem vero porro
-            accusantium quibusdam!
-          </p>
-          <div className='table-responsive'>
-            <table
-              className='table table-bordered'
-              id='dataTable2'
-              width='100%'
-              cellSpacing='0'
-            >
-              <thead>
-                <tr>
-                  <th>User</th>
-                  <th>Description</th>
-                  <th>Time</th>
-                </tr>
-              </thead>
-              <tfoot>
-                <tr>
-                  <th>User</th>
-                  <th>Description</th>
-                  <th>Time</th>
-                </tr>
-              </tfoot>
-              <tbody>
-                {ticket &&
-                  ticket.history.map((item, index) => {
-                    return (
-                      <tr key={item._id}>
-                        <td>{item.user}</td>
-                        <td>{item.description}</td>
-                        <td>{item.time}</td>
-                      </tr>
-                    );
-                  })}
-              </tbody>
-            </table>
+    !loading && (
+      <div className='col-lg-8 mb-4'>
+        <div className='card shadow'>
+          <div className='card-header bg-gradient-purple'>History</div>
+          <div className='card-body'>
+            <p>
+              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Tempora
+              voluptas officia voluptate omnis error minus rem vero porro
+              accusantium quibusdam!
+            </p>
+            <div className='table-responsive'>
+              <table
+                className='table table-bordered'
+                id='dataTable2'
+                width='100%'
+                cellSpacing='0'
+              >
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Description</th>
+                    <th>Time</th>
+                  </tr>
+                </thead>
+                <tfoot>
+                  <tr>
+                    <th>User</th>
+                    <th>Description</th>
+                    <th>Time</th>
+                  </tr>
+                </tfoot>
+                <tbody>
+                  {ticket &&
+                    ticket.history.map((item, index) => {
+                      return (
+                        <tr key={item._id}>
+                          <td>{item.user}</td>
+                          <td>{item.description}</td>
+                          <td>{item.time}</td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    )
+  );
+}
+
+function AddComment({ text, handleChange, handleSubmit, loading }) {
+  return (
+    !loading && (
+      <div className='add-comment p-sm-2 mb-3'>
+        <textarea
+          className='mb-3'
+          name='comment'
+          id='commentField'
+          cols='30'
+          rows='10'
+          value={text}
+          onChange={e => handleChange(e)}
+        ></textarea>
+        <button className='btn btn-success' onClick={e => handleSubmit(e)}>
+          Add your comment
+        </button>
+      </div>
+    )
   );
 }
 
@@ -185,12 +213,15 @@ class Ticket extends React.Component {
           current: '',
           edited: false
         }
-      }
+      },
+      comment: ''
     };
 
     this.toggleEdit = this.toggleEdit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleShallowChange = this.handleShallowChange.bind(this);
+    this.handleCommentSubmit = this.handleCommentSubmit.bind(this);
   }
 
   toggleEdit() {
@@ -213,6 +244,25 @@ class Ticket extends React.Component {
     }));
   }
 
+  handleShallowChange(e) {
+    const { name, value } = e.target;
+
+    this.setState({
+      [name]: value
+    });
+  }
+
+  handleCommentSubmit(e) {
+    e.preventDefault();
+
+    const { comment } = this.state;
+
+    this.props.addComment(this.props.match.params.ticketId, comment);
+    this.setState({
+      comment: ''
+    });
+  }
+
   handleSubmit(e) {
     e.preventDefault();
     // Get only values that were changed from the ticket state:
@@ -225,8 +275,6 @@ class Ticket extends React.Component {
       group[item] = this.state.ticket[item].current;
       return group;
     }, {});
-
-    console.log(values);
 
     // Edit ticket
     this.props.editTicket(this.props.match.params.ticketId, values);
@@ -272,7 +320,8 @@ class Ticket extends React.Component {
   }
 
   render() {
-    const { ticket } = this.props.tickets;
+    const { ticket } = this.props,
+      { loading } = this.props.tickets;
 
     if (this.props.tickets.tickets.length === 0) {
       return <Redirect to='/dashboard' />;
@@ -286,8 +335,6 @@ class Ticket extends React.Component {
         <div className='row p-sm-4 mb-3 d-flex justify-content-center'>
           <img src='../../img/searching.svg' alt='Project building' />
         </div>
-
-        {JSON.stringify(this.state)}
 
         <div className='row my-3'>
           <div className='col-lg-12 table-responsive'>
@@ -332,6 +379,7 @@ class Ticket extends React.Component {
               handleChange={this.handleChange}
               handleSubmit={this.handleSubmit}
               values={this.state.ticket}
+              loading={loading}
             />
           </Fragment>
         )}
@@ -341,7 +389,7 @@ class Ticket extends React.Component {
         <div className='row mb-5'>
           {/* Begin ticket history */}
 
-          <History ticket={ticket} />
+          <History ticket={ticket} loading={loading} />
 
           {/* End Ticket history */}
 
@@ -351,16 +399,13 @@ class Ticket extends React.Component {
               <div className='card-header bg-gradient-purple'>Comments</div>
 
               <div className='card-body'>
-                <div className='add-comment p-sm-2 mb-3'>
-                  <textarea
-                    className='mb-3'
-                    name='comment'
-                    id='commentField'
-                    cols='30'
-                    rows='10'
-                  ></textarea>
-                  <button className='btn btn-success'>Add your comment</button>
-                </div>
+                <Alert />
+                <AddComment
+                  text={this.state.comment}
+                  handleChange={this.handleShallowChange}
+                  handleSubmit={this.handleCommentSubmit}
+                  loading={loading}
+                />
 
                 <div className='table-responsive'>
                   <table
@@ -409,9 +454,13 @@ class Ticket extends React.Component {
 
 const mapStateToProps = state => ({
   tickets: state.tickets,
+  ticket: state.tickets.ticket,
   users: state.users.users
 });
 
-export default connect(mapStateToProps, { getTickets, setTicket, editTicket })(
-  Ticket
-);
+export default connect(mapStateToProps, {
+  getTickets,
+  setTicket,
+  editTicket,
+  addComment
+})(Ticket);
