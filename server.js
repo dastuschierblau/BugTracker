@@ -15,7 +15,7 @@ app.use(helmet());
 app.use(
   helmet.contentSecurityPolicy({
     directives: {
-      defaultSrc: ['self', 'favicon.ico']
+      defaultSrc: ["'self'", 'favicon.ico']
     }
   })
 );
