@@ -2,6 +2,7 @@ const express = require('express');
 const connectDB = require('./config/db');
 const cors = require('cors');
 const path = require('path');
+const helmet = require('helmet');
 
 const app = express();
 
@@ -10,6 +11,14 @@ connectDB();
 
 // Init Middleware
 //app.use(cors());
+app.use(helmet());
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ['self', 'favicon.ico']
+    }
+  })
+);
 app.use(express.json({ extended: false }));
 
 // Define routes
