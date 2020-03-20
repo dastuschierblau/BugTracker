@@ -8,13 +8,10 @@ function Sidebar() {
       id='accordionSidebar'
     >
       {/* Sidebar - Brand */}
-      <a
-        className='sidebar-brand d-flex align-items-center justify-content-center'
-        href='index.html'
-      >
+      <div className='sidebar-brand d-flex align-items-center justify-content-center'>
         <div className='sidebar-brand-icon rotate-n-15'></div>
         <div className='sidebar-brand-text mx-3'>Slack Tracker</div>
-      </a>
+      </div>
 
       {/* Divider */}
       <hr className='sidebar-divider my-0' />
