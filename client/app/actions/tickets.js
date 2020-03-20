@@ -1,5 +1,11 @@
 import axios from 'axios';
-import { GET_TICKETS, TICKETS_ERROR, CREATE_TICKET } from './types';
+import {
+  GET_TICKETS,
+  TICKETS_ERROR,
+  CREATE_TICKET,
+  SET_TICKET,
+  EDIT_TICKET
+} from './types';
 import { setAlert } from './alert';
 
 const baseUrl = process.env.NEXT_STATIC_BASE_URL || 'http://localhost:5000';
@@ -14,6 +20,48 @@ export const getTickets = projectId => async dispatch => {
       payload: res.data
     });
   } catch (err) {
+    dispatch({
+      type: TICKETS_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+// Set a ticket as current ticket:
+export const setTicket = ticket => dispatch => {
+  dispatch({
+    type: SET_TICKET,
+    payload: ticket
+  });
+};
+
+// PUT api/tickets/:ticket_id
+// Edit a ticket:
+export const editTicket = (ticketId, values) => async dispatch => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+
+  let body = JSON.stringify(values);
+
+  try {
+    let res = await axios.put(
+      `${baseUrl}/api/projects/tickets/${ticketId}`,
+      body,
+      config
+    );
+
+    dispatch({
+      type: EDIT_TICKET,
+      payload: res.data
+    });
+
+    dispatch(setAlert('Ticket edited', 'success'));
+  } catch (err) {
+    dispatch(setAlert(err.response.statusText, 'danger'));
+
     dispatch({
       type: TICKETS_ERROR,
       payload: { msg: err.response.statusText, status: err.response.status }

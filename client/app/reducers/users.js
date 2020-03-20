@@ -1,4 +1,4 @@
-import { GET_USERS, LOAD_ERROR, EDIT_USER } from '../actions/types';
+import { GET_USERS, LOAD_ERROR, EDIT_USER, LOGOUT } from '../actions/types';
 
 const initialState = {
   loading: true,
@@ -23,6 +23,10 @@ export default function users(state = initialState, action) {
             ? payload.targetUser
             : item;
         })
+      };
+    case LOGOUT:
+      return {
+        ...initialState
       };
     case LOAD_ERROR:
       return {

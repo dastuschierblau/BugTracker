@@ -1,16 +1,196 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import Navbar from './Navbar';
+import Alert from './Alert';
 import { connect } from 'react-redux';
+import { getTickets, setTicket, editTicket } from '../../actions/tickets';
+import { Redirect } from 'react-router-dom';
+
+function EditTicket({ handleChange, toggle, handleSubmit, values }) {
+  const { category, priority, status, assignedTo, description } = values;
+
+  return (
+    <div className='row mb-5'>
+      <div className='col-lg-8 m-auto mb-4'>
+        <div className='card shadow'>
+          <div className='card-header bg-gradient-purple d-flex justify-content-between'>
+            Edit Ticket:
+            <i onClick={toggle} className='fas fa-window-close fa-2x'></i>
+          </div>
+          <div className='card-body'>
+            <form action='post'>
+              <div className='form-group d-flex justify-content-between'>
+                <label>Category:</label>
+                <select
+                  onChange={e => handleChange(e)}
+                  name='category'
+                  value={category.current}
+                >
+                  <option name='category' value='UI'>
+                    UI
+                  </option>
+                  <option name='category' value='Routing'>
+                    Routing
+                  </option>
+                  <option name='category' value='Backend'>
+                    Backend
+                  </option>
+                  <option name='category' value='Redux'>
+                    Redux
+                  </option>
+                  <option name='category' value='UX'>
+                    UX
+                  </option>
+                </select>
+              </div>
+              <div className='form-group d-flex flex-column'>
+                <label>Description:</label>
+                <textarea
+                  name='description'
+                  cols='30'
+                  rows='5'
+                  onChange={e => handleChange(e)}
+                  name='description'
+                  value={description.current}
+                ></textarea>
+              </div>
+              <div className='form-group d-flex justify-content-between'>
+                <label>Assigned To:</label>
+                <select
+                  name='assignedTo'
+                  onChange={e => handleChange(e)}
+                  value={assignedTo.current}
+                >
+                  <option value='Toby Slack'>Toby Slack</option>
+                  <option value='Brett Slack'>Brett Slack</option>
+                  <option value='John Doe'>John Doe</option>
+                  <option value='Emmett Slack'>Emmett Slack</option>
+                </select>
+              </div>
+              <div className='form-group d-flex justify-content-between'>
+                <label>Status:</label>
+                <select
+                  name='status'
+                  value={status.current}
+                  onChange={e => handleChange(e)}
+                >
+                  <option value='Open'>Open</option>
+                  <option value='In progress'>In Progress</option>
+                  <option value='Pending'>Pending Review</option>
+                  <option value='Stuck'>Stuck</option>
+                  <option value='Done'>Done</option>
+                </select>
+              </div>
+              <div className='form-group d-flex justify-content-between'>
+                <label>Priority</label>
+                <select
+                  name='priority'
+                  value={priority.current}
+                  onChange={e => handleChange(e)}
+                >
+                  <option value='low'>Low</option>
+                  <option value='medium'>Medium</option>
+                  <option value='high'>High</option>
+                </select>
+              </div>
+              <input
+                type='submit'
+                className='btn btn-success'
+                value='Submit'
+                onClick={e => handleSubmit(e)}
+              />
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function History({ ticket }) {
+  return (
+    <div className='col-lg-8 mb-4'>
+      <div className='card shadow'>
+        <div className='card-header bg-gradient-purple'>History</div>
+        <div className='card-body'>
+          <p>
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Tempora
+            voluptas officia voluptate omnis error minus rem vero porro
+            accusantium quibusdam!
+          </p>
+          <div className='table-responsive'>
+            <table
+              className='table table-bordered'
+              id='dataTable2'
+              width='100%'
+              cellSpacing='0'
+            >
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Description</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tfoot>
+                <tr>
+                  <th>User</th>
+                  <th>Description</th>
+                  <th>Time</th>
+                </tr>
+              </tfoot>
+              <tbody>
+                {ticket &&
+                  ticket.history.map((item, index) => {
+                    return (
+                      <tr key={item._id}>
+                        <td>{item.user}</td>
+                        <td>{item.description}</td>
+                        <td>{item.time}</td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 class Ticket extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      editTicket: false
+      editTicket: false,
+      ticket: {
+        category: {
+          current: '',
+          edited: false
+        },
+        description: {
+          current: '',
+          edited: false
+        },
+        assignedTo: {
+          current: '',
+          edited: false
+        },
+        status: {
+          current: '',
+          edited: false
+        },
+        priority: {
+          current: '',
+          edited: false
+        }
+      }
     };
 
     this.toggleEdit = this.toggleEdit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   toggleEdit() {
@@ -19,20 +199,95 @@ class Ticket extends React.Component {
     }));
   }
 
+  handleChange(e) {
+    const { name, value } = e.target;
+
+    this.setState(prevState => ({
+      ticket: {
+        ...prevState.ticket,
+        [name]: {
+          current: value,
+          edited: true
+        }
+      }
+    }));
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    // Get only values that were changed from the ticket state:
+    let keys = Object.keys(this.state.ticket);
+    let editedKeys = keys.filter(item => {
+      return this.state.ticket[item].edited;
+    });
+
+    const values = editedKeys.reduce((group, item) => {
+      group[item] = this.state.ticket[item].current;
+      return group;
+    }, {});
+
+    console.log(values);
+
+    // Edit ticket
+    this.props.editTicket(this.props.match.params.ticketId, values);
+    setTimeout(this.toggleEdit, 2000);
+  }
+
   componentDidMount() {
     const { ticketId } = this.props.match.params;
+    const { tickets } = this.props.tickets;
 
-    //this.props.getTicket(ticketId);
+    if (tickets.length !== 0) {
+      const ticket = this.props.tickets.tickets.filter(item => {
+        return item._id === ticketId;
+      })[0];
+
+      this.props.setTicket(ticket);
+
+      this.setState(prevState => ({
+        ticket: {
+          category: {
+            ...prevState.category,
+            current: ticket.category
+          },
+          description: {
+            ...prevState.description,
+            current: ticket.description
+          },
+          priority: {
+            ...prevState.priority,
+            current: ticket.priority
+          },
+          status: {
+            ...prevState.status,
+            current: ticket.status
+          },
+          assignedTo: {
+            ...prevState.assignedTo,
+            current: ticket.assignedTo
+          }
+        }
+      }));
+    }
   }
 
   render() {
+    const { ticket } = this.props.tickets;
+
+    if (this.props.tickets.tickets.length === 0) {
+      return <Redirect to='/dashboard' />;
+    }
+
     return (
       <Navbar>
         {/* Ticket Properties */}
+
         <h1 className='h3 mb-3 text-gray-800 my-3'>Ticket</h1>
         <div className='row p-sm-4 mb-3 d-flex justify-content-center'>
           <img src='../../img/searching.svg' alt='Project building' />
         </div>
+
+        {JSON.stringify(this.state)}
 
         <div className='row my-3'>
           <div className='col-lg-12 table-responsive'>
@@ -48,146 +303,45 @@ class Ticket extends React.Component {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>UI</td>
-                  <td className='toggle-collapse'>
-                    Cannot deselect cell without selecting another cell
-                  </td>
-                  <td>Toby Slack</td>
-                  <td>Medium</td>
-                  <td>Open</td>
-                  <td>
-                    <i className='far fa-edit' onClick={this.toggleEdit}></i>
-                  </td>
-                </tr>
+                {ticket && (
+                  <tr>
+                    <td>{ticket.category}</td>
+                    <td className='toggle-collapse'>{ticket.description}</td>
+                    <td>{ticket.assignedTo}</td>
+                    <td>{ticket.priority}</td>
+                    <td>{ticket.status}</td>
+                    <td>
+                      <i className='far fa-edit' onClick={this.toggleEdit}></i>
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
         </div>
+
         {/* End ticket properties */}
 
         {/* Begin edit ticket */}
+
         {this.state.editTicket && (
-          <div className='row mb-5'>
-            <div className='col-lg-8 m-auto mb-4'>
-              <div className='card shadow'>
-                <div className='card-header bg-gradient-purple d-flex justify-content-between'>
-                  Edit Ticket:
-                  <i
-                    onClick={this.toggleEdit}
-                    className='fas fa-window-close fa-2x'
-                  ></i>
-                </div>
-                <div className='card-body'>
-                  <form action='post'>
-                    <div className='form-group d-flex justify-content-between'>
-                      <label>Category:</label>
-                      <select name='category'>
-                        <option value='UI'>UI</option>
-                        <option value='database'>Database</option>
-                        <option value='addFn'>Add Function</option>
-                        <option value='redux'>Redux</option>
-                        <option value='UX'>UX</option>
-                      </select>
-                    </div>
-                    <div className='form-group d-flex flex-column'>
-                      <label>Description:</label>
-                      <textarea
-                        name='description'
-                        cols='30'
-                        rows='5'
-                      ></textarea>
-                    </div>
-                    <div className='form-group d-flex justify-content-between'>
-                      <label>Assigned To:</label>
-                      <select name='assigned'>
-                        <option value='Toby Slack'>Toby Slack</option>
-                        <option value='Brett Slack'>Brett Slack</option>
-                        <option value='John Doe'>John Doe</option>
-                        <option value='Emmett Slack'>Emmett Slack</option>
-                      </select>
-                    </div>
-                    <div className='form-group d-flex justify-content-between'>
-                      <label>Status:</label>
-                      <select name='status'>
-                        <option value='open'>Open</option>
-                        <option value='in progress'>In Progress</option>
-                        <option value='pending'>Pending Review</option>
-                        <option value='stuck'>Stuck</option>
-                        <option value='done'>Done</option>
-                      </select>
-                    </div>
-                    <div className='form-group d-flex justify-content-between'>
-                      <label>Priority</label>
-                      <select name='priority'>
-                        <option value='low'>Low</option>
-                        <option value='medium'>Medium</option>
-                        <option value='high'>High</option>
-                      </select>
-                    </div>
-                    <input
-                      type='submit'
-                      className='btn btn-success'
-                      value='Submit'
-                    />
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
+          <Fragment>
+            <Alert />
+            <EditTicket
+              toggle={this.toggleEdit}
+              handleChange={this.handleChange}
+              handleSubmit={this.handleSubmit}
+              values={this.state.ticket}
+            />
+          </Fragment>
         )}
 
         {/* End edit ticket */}
 
-        {/* Begin ticket history */}
         <div className='row mb-5'>
-          <div className='col-lg-8 mb-4'>
-            <div className='card shadow'>
-              <div className='card-header bg-gradient-purple'>History</div>
-              <div className='card-body'>
-                <p>
-                  Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                  Tempora voluptas officia voluptate omnis error minus rem vero
-                  porro accusantium quibusdam!
-                </p>
-                <div className='table-responsive'>
-                  <table
-                    className='table table-bordered'
-                    id='dataTable2'
-                    width='100%'
-                    cellSpacing='0'
-                  >
-                    <thead>
-                      <tr>
-                        <th>User</th>
-                        <th>Description</th>
-                        <th>Time</th>
-                      </tr>
-                    </thead>
-                    <tfoot>
-                      <tr>
-                        <th>User</th>
-                        <th>Description</th>
-                        <th>Time</th>
-                      </tr>
-                    </tfoot>
-                    <tbody>
-                      <tr>
-                        <td>Toby Slack</td>
-                        <td>Changed status to in progress</td>
-                        <td>2:42 PM March 11, 2020</td>
-                      </tr>
-                      <tr>
-                        <td>Brett Slack</td>
-                        <td>Added a comment.</td>
-                        <td>4:21 PM March 11, 2020</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Begin ticket history */}
+
+          <History ticket={ticket} />
 
           {/* End Ticket history */}
 
@@ -230,19 +384,16 @@ class Ticket extends React.Component {
                       </tr>
                     </tfoot>
                     <tbody>
-                      <tr>
-                        <td>Toby Slack</td>
-                        <td>
-                          I having trouble with some of the CSS properties. Can
-                          anyone help?
-                        </td>
-                        <td>2:42 PM March 11, 2020</td>
-                      </tr>
-                      <tr>
-                        <td>Brett Slack</td>
-                        <td>I have added a few classes that should help.</td>
-                        <td>4:21 PM March 11, 2020</td>
-                      </tr>
+                      {ticket &&
+                        ticket.comments.map(item => {
+                          return (
+                            <tr key={item._id}>
+                              <td>{item.user}</td>
+                              <td>{item.text}</td>
+                              <td>{item.date}</td>
+                            </tr>
+                          );
+                        })}
                     </tbody>
                   </table>
                 </div>
@@ -256,4 +407,11 @@ class Ticket extends React.Component {
   }
 }
 
-export default connect()(Ticket);
+const mapStateToProps = state => ({
+  tickets: state.tickets,
+  users: state.users.users
+});
+
+export default connect(mapStateToProps, { getTickets, setTicket, editTicket })(
+  Ticket
+);

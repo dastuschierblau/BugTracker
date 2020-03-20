@@ -44,6 +44,7 @@ export default function projects(state = initialState, action) {
     case LOGOUT:
       return {
         ...state,
+        projectList: [],
         project: null
       };
     default:

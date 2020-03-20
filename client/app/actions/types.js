@@ -17,3 +17,5 @@ export const SET_PROJECT = 'SET_PROJECT';
 export const GET_TICKETS = 'GET_TICKETS';
 export const TICKETS_ERROR = 'TICKETS_ERROR';
 export const CREATE_TICKET = 'CREATE_TICKET';
+export const SET_TICKET = 'SET_TICKET';
+export const EDIT_TICKET = 'EDIT_TICKET';

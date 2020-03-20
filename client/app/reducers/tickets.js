@@ -1,4 +1,11 @@
-import { GET_TICKETS, TICKETS_ERROR, CREATE_TICKET } from '../actions/types';
+import {
+  GET_TICKETS,
+  TICKETS_ERROR,
+  CREATE_TICKET,
+  SET_TICKET,
+  EDIT_TICKET,
+  LOGOUT
+} from '../actions/types';
 
 let initialState = {
   loading: true,
@@ -23,11 +30,29 @@ export default function tickets(state = initialState, action) {
         tickets: state.tickets.concat([payload]),
         loading: false
       };
+    case SET_TICKET:
+      return {
+        ...state,
+        ticket: payload
+      };
+    case EDIT_TICKET:
+      return {
+        ...state,
+        tickets: state.tickets.map(item => {
+          return item._id === payload._id ? payload : item;
+        }),
+        ticket: payload,
+        loading: false
+      };
     case TICKETS_ERROR:
       return {
         ...state,
         loading: false,
         error: payload
+      };
+    case LOGOUT:
+      return {
+        ...initialState
       };
     default:
       return state;

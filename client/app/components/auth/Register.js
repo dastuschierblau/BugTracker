@@ -124,22 +124,6 @@ class Register extends React.Component {
               </div>
             </div>
           </div>
-
-          <div>
-            <h3 className='h3 text-center font-weight-bold text-primary'>
-              Or choose a demo account:
-            </h3>
-            <div className='row'>
-              <button className='col-md-6 demo-user'>
-                <i className='fas fa-user mb-2'></i>
-                <h6>Project Manager</h6>
-              </button>
-              <button className='col-md-6 demo-user'>
-                <i className='fas fa-user mb-2'></i>
-                <h6>Developer</h6>
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     );

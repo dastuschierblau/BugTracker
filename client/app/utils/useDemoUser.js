@@ -5,7 +5,7 @@ export default function useDemoUser(role) {
   };
 
   if (role === 'manager') {
-    credentials.email = 'johndoe@gmail.com';
+    credentials.email = 'brett.slack@yahoo.com';
   } else if (role === 'developer') {
     credentials.email = 'jenny@gmail.com';
   }

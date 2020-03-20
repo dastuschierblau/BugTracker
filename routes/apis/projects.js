@@ -223,11 +223,11 @@ router.get('/:project_id/tickets/:ticket_id', auth, async (req, res) => {
   }
 });
 
-// @route  PUT api/projects/:project_id/tickets/:ticket_id
+// @route  PUT api/projects/tickets/:ticket_id
 // @desc   Edit a ticket
 // @access Admin, project manager, developer
 router.put(
-  '/:project_id/tickets/:ticket_id',
+  '/tickets/:ticket_id',
   auth,
   (req, res, next) => {
     permit(req, res, next, 'admin', 'manager', 'developer');

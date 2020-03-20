@@ -38,6 +38,12 @@ class Login extends React.Component {
       email,
       password
     });
+
+    try {
+      this.props.login(user);
+    } catch (err) {
+      this.props.setAlert('Invalid Credentials', 'danger');
+    }
   }
 
   async handleSubmit(e) {
