@@ -2,6 +2,9 @@
   "name": "help-desk",
   "version": "1.0.0",
   "description": "Help Desk program",
+  "engines": {
+    "node": "10.14.x"
+  },
   "main": "server.js",
   "scripts": {
     "start": "node server",
