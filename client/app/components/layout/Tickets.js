@@ -31,6 +31,8 @@ class Tickets extends React.Component {
 
   render() {
     const { project, manager } = this.props.location.state;
+    const { userNames } = this.props;
+
     if (!project) return <Redirect to='/projects' />;
 
     return (
@@ -86,7 +88,7 @@ class Tickets extends React.Component {
                             <td className='toggle-collapse'>
                               {ticket.description}
                             </td>
-                            <td>{ticket.assignedTo}</td>
+                            <td>{userNames[ticket.assignedTo]}</td>
                             <td>{ticket.priority}</td>
                             <td>{ticket.status}</td>
                             <td>
@@ -125,7 +127,8 @@ class Tickets extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  tickets: state.tickets
+  tickets: state.tickets,
+  userNames: state.users.idToName
 });
 
 export default connect(mapStateToProps, { getTickets, setProject })(Tickets);

@@ -10,7 +10,7 @@ const app = express();
 connectDB();
 
 // Init Middleware
-//app.use(cors());
+app.use(cors());
 app.use(helmet());
 app.use(
   helmet.contentSecurityPolicy({

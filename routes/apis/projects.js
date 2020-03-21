@@ -188,7 +188,7 @@ router.post(
     ticketFields.history.push({
       user: submittedBy,
       description: `Created ticket with initial settings: 
-      Category: ${category}, Assigned to: ${assignedTo}, Priority: ${priority}`
+      Category: ${category}, Priority: ${priority}`
     });
 
     let ticket = new Ticket(ticketFields);

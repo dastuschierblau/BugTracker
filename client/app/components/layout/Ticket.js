@@ -111,7 +111,7 @@ function EditTicket({ handleChange, toggle, handleSubmit, values }) {
   );
 }
 
-function History({ ticket, loading }) {
+function History({ ticket, loading, userNames }) {
   return (
     !loading && (
       <div className='col-lg-8 mb-4'>
@@ -149,7 +149,7 @@ function History({ ticket, loading }) {
                     ticket.history.map((item, index) => {
                       return (
                         <tr key={item._id}>
-                          <td>{item.user}</td>
+                          <td>{userNames[item.user]}</td>
                           <td>{item.description}</td>
                           <td>{item.time}</td>
                         </tr>
@@ -321,7 +321,8 @@ class Ticket extends React.Component {
 
   render() {
     const { ticket } = this.props,
-      { loading } = this.props.tickets;
+      { loading } = this.props.tickets,
+      { userNames } = this.props;
 
     if (this.props.tickets.tickets.length === 0) {
       return <Redirect to='/dashboard' />;
@@ -354,7 +355,7 @@ class Ticket extends React.Component {
                   <tr>
                     <td>{ticket.category}</td>
                     <td className='toggle-collapse'>{ticket.description}</td>
-                    <td>{ticket.assignedTo}</td>
+                    <td>{userNames[ticket.assignedTo]}</td>
                     <td>{ticket.priority}</td>
                     <td>{ticket.status}</td>
                     <td>
@@ -379,6 +380,7 @@ class Ticket extends React.Component {
               handleChange={this.handleChange}
               handleSubmit={this.handleSubmit}
               values={this.state.ticket}
+              userNames={userNames}
               loading={loading}
             />
           </Fragment>
@@ -389,7 +391,7 @@ class Ticket extends React.Component {
         <div className='row mb-5'>
           {/* Begin ticket history */}
 
-          <History ticket={ticket} loading={loading} />
+          <History ticket={ticket} userNames={userNames} loading={loading} />
 
           {/* End Ticket history */}
 
@@ -433,7 +435,7 @@ class Ticket extends React.Component {
                         ticket.comments.map(item => {
                           return (
                             <tr key={item._id}>
-                              <td>{item.user}</td>
+                              <td>{userNames[item.user]}</td>
                               <td>{item.text}</td>
                               <td>{item.date}</td>
                             </tr>
@@ -455,7 +457,8 @@ class Ticket extends React.Component {
 const mapStateToProps = state => ({
   tickets: state.tickets,
   ticket: state.tickets.ticket,
-  users: state.users.users
+  users: state.users.users,
+  userNames: state.users.idToName
 });
 
 export default connect(mapStateToProps, {

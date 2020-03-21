@@ -49,10 +49,7 @@ export default function tickets(state = initialState, action) {
     case ADD_COMMENT:
       return {
         ...state,
-        ticket: {
-          ...state.ticket,
-          comments: comments.concat([payload])
-        },
+        ticket: payload,
         loading: false
       };
     case TICKETS_ERROR:

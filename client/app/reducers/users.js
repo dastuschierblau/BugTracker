@@ -2,7 +2,9 @@ import { GET_USERS, LOAD_ERROR, EDIT_USER, LOGOUT } from '../actions/types';
 
 const initialState = {
   loading: true,
-  users: []
+  users: [],
+  idToName: {},
+  error: {}
 };
 
 export default function users(state = initialState, action) {
@@ -13,6 +15,10 @@ export default function users(state = initialState, action) {
       return {
         ...state,
         users: [...payload],
+        idToName: payload.reduce((group, item) => {
+          group[item._id] = item.name;
+          return group;
+        }, {}),
         loading: false
       };
     case EDIT_USER:
@@ -31,6 +37,7 @@ export default function users(state = initialState, action) {
     case LOAD_ERROR:
       return {
         ...state,
+        error: payload,
         loading: false
       };
     default:
