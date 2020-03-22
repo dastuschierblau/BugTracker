@@ -5,6 +5,7 @@ import {
   CREATE_TICKET,
   SET_TICKET,
   EDIT_TICKET,
+  CLEAR_TICKETS,
   ADD_COMMENT,
   COMMENT_ERROR
 } from './types';
@@ -131,6 +132,13 @@ export const createTicket = (
   }
 };
 
+// Clear tickets from state
+export const clearTickets = () => dispatch => {
+  dispatch({
+    type: CLEAR_TICKETS
+  });
+};
+
 // Add a comment to a ticket:
 export const addComment = (ticketId, text) => async dispatch => {
   const config = {
@@ -147,8 +155,6 @@ export const addComment = (ticketId, text) => async dispatch => {
       body,
       config
     );
-
-    console.log(res.data);
 
     dispatch({
       type: ADD_COMMENT,

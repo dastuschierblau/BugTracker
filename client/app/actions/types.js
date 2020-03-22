@@ -19,5 +19,6 @@ export const TICKETS_ERROR = 'TICKETS_ERROR';
 export const CREATE_TICKET = 'CREATE_TICKET';
 export const SET_TICKET = 'SET_TICKET';
 export const EDIT_TICKET = 'EDIT_TICKET';
+export const CLEAR_TICKETS = 'CLEAR_TICKETS';
 export const ADD_COMMENT = 'ADD_COMMENT';
 export const COMMENT_ERROR = 'COMMENT_ERROR';

@@ -4,6 +4,7 @@ import {
   CREATE_TICKET,
   SET_TICKET,
   EDIT_TICKET,
+  CLEAR_TICKETS,
   ADD_COMMENT,
   COMMENT_ERROR,
   LOGOUT
@@ -57,6 +58,13 @@ export default function tickets(state = initialState, action) {
         ...state,
         loading: false,
         error: payload
+      };
+    case CLEAR_TICKETS:
+      return {
+        ...state,
+        loading: true,
+        tickets: [],
+        ticket: null
       };
     case COMMENT_ERROR:
       return {

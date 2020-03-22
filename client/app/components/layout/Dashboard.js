@@ -1,30 +1,26 @@
 import React from 'react';
 import Navbar from './Navbar';
 import { connect } from 'react-redux';
-import { getAllTickets } from '../../actions/tickets';
+import { getAllTickets, clearTickets } from '../../actions/tickets';
 import Chart from 'chart.js';
+import Loading from './Loading';
+import getChartData from '../../utils/getChartData';
 
 class LineGraph extends React.Component {
   chartRef = React.createRef();
 
   componentDidMount() {
+    const labels = Object.keys(this.props.data),
+      data = labels.map(item => {
+        return this.props.data[item];
+      });
+
     const myChartRef = this.chartRef.current.getContext('2d');
 
     new Chart(myChartRef, {
       type: 'line',
       data: {
-        labels: [
-          '3/1',
-          '3/2',
-          '3/3',
-          '3/4',
-          '3/5',
-          '3/6',
-          '3/7',
-          '3/8',
-          '3/9',
-          '3/10'
-        ],
+        labels: labels,
         datasets: [
           {
             label: 'Ticket Edits',
@@ -39,7 +35,7 @@ class LineGraph extends React.Component {
             pointHoverBorderColor: 'rgba(78, 115, 223, 1)',
             pointHitRadius: 10,
             pointBorderWidth: 2,
-            data: [0, 5, 10, 7, 1, 8, 0, 0, 4, 2]
+            data: data
           }
         ]
       },
@@ -119,20 +115,24 @@ class Doughnut extends React.Component {
 
   componentDidMount() {
     const myChartRef = this.chartRef.current.getContext('2d');
+    const labels = Object.keys(this.props.data),
+      data = labels.map(item => {
+        return this.props.data[item];
+      });
 
     new Chart(myChartRef, {
       type: 'doughnut',
       data: {
-        labels: ['Open', 'In Progress', 'Pending Review', 'Stuck', 'Done'],
+        labels: labels,
         datasets: [
           {
-            data: [5, 7, 2, 1, 2],
+            data: data,
             backgroundColor: [
               '#4e73df',
               '#1cc88a',
               '#f6c23e',
-              '#e74a3b',
-              '#36b9cc'
+              '#36b9cc',
+              '#e74a3b'
             ],
             hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
             hoverBorderColor: 'rgba(234, 236, 244, 1)'
@@ -140,7 +140,7 @@ class Doughnut extends React.Component {
         ]
       },
       options: {
-        maintainAspectRatio: false,
+        maintainAspectRatio: true,
         tooltips: {
           backgroundColor: 'rgb(255,255,255)',
           bodyFontColor: '#858796',
@@ -168,29 +168,28 @@ class Doughnut extends React.Component {
 }
 
 class Dashboard extends React.Component {
-  componentDidMount() {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      data: {}
+    };
+  }
+
+  async componentDidMount() {
+    if (this.props.tickets.length !== 0) {
+      await this.props.clearTickets();
+    }
+
     this.props.getAllTickets();
   }
 
   render() {
-    const { tickets } = this.props.tickets;
-    let data = {
-      labels: ['Open', 'In Progress', 'Pending Review', 'Stuck', 'Done'],
-      datasets: [
-        {
-          data: [5, 7, 2, 1, 2],
-          backgroundColor: [
-            '#4e73df',
-            '#1cc88a',
-            '#f6c23e',
-            '#e74a3b',
-            '#36b9cc'
-          ],
-          hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
-          hoverBorderColor: 'rgba(234, 236, 244, 1)'
-        }
-      ]
-    };
+    const { tickets, loading } = this.props.tickets;
+
+    if (loading) return <Loading />;
+
+    let data = getChartData(this.props.tickets.tickets);
 
     return (
       <Navbar>
@@ -211,12 +210,11 @@ class Dashboard extends React.Component {
               </div>
               <div className='card-body'>
                 <div className='chart-area mb-3'>
-                  <LineGraph />
+                  <LineGraph data={data.historyData} />
                 </div>
                 <p>
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                  Veniam ducimus illo sapiente excepturi ipsa sit minima,
-                  molestias cumque eos assumenda.
+                  Overall team activity on tickets over the past 10 days.
+                  Activity includes ticket creation, edits, and comment posts.
                 </p>
               </div>
             </div>
@@ -230,12 +228,11 @@ class Dashboard extends React.Component {
               </div>
               <div className='card-body'>
                 <div className='chart-area mb-3'>
-                  <Doughnut />
+                  <Doughnut data={data.statusData} />
                 </div>
                 <p>
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                  Veniam ducimus illo sapiente excepturi ipsa sit minima,
-                  molestias cumque eos assumenda.
+                  An overview of the status of tickets across all posted
+                  projects.
                 </p>
               </div>
             </div>
@@ -260,4 +257,6 @@ const mapStateToProps = state => ({
   tickets: state.tickets
 });
 
-export default connect(mapStateToProps, { getAllTickets })(Dashboard);
+export default connect(mapStateToProps, { getAllTickets, clearTickets })(
+  Dashboard
+);
