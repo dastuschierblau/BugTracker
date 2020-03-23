@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { getTickets } from '../../actions/tickets';
 import { setProject } from '../../actions/projects';
 import CreateTicket from '../create-forms/CreateTicket';
+import Moment from 'react-moment';
 
 class Tickets extends React.Component {
   constructor(props) {
@@ -42,7 +43,9 @@ class Tickets extends React.Component {
           <div className='card-body'>
             <p>{project.description}</p>
             <div className='d-flex justify-content-between'>
-              <div>{project.date}</div>
+              <div>
+                <Moment format='YYYY/MM/DD'>{project.date}</Moment>
+              </div>
               <div>{`Manager: ${manager.name}`}</div>
             </div>
           </div>

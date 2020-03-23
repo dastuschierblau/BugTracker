@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { getProjects } from '../../actions/projects';
 import { getUsers } from '../../actions/users';
 import { setAlert } from '../../actions/alert';
+import Moment from 'react-moment';
 
 class Projects extends React.Component {
   constructor(props) {
@@ -100,7 +101,9 @@ class Projects extends React.Component {
                           <div className='card-body'>
                             <p>{item.description}</p>
                             <div className='d-flex justify-content-between'>
-                              <div>{item.date}</div>
+                              <div>
+                                <Moment format='YYYY/MM/DD'>{item.date}</Moment>
+                              </div>
                               <div>
                                 Manager:{' '}
                                 {users

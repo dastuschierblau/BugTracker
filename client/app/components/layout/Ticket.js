@@ -9,6 +9,7 @@ import {
   addComment
 } from '../../actions/tickets';
 import { Redirect } from 'react-router-dom';
+import Moment from 'react-moment';
 
 function EditTicket({ handleChange, toggle, handleSubmit, values }) {
   const { category, priority, status, assignedTo, description } = values;
@@ -151,7 +152,11 @@ function History({ ticket, loading, userNames }) {
                         <tr key={item._id}>
                           <td>{userNames[item.user]}</td>
                           <td>{item.description}</td>
-                          <td>{item.time}</td>
+                          <td>
+                            <Moment format='MM/DD/YYYY, h:mm a'>
+                              {item.time}
+                            </Moment>
+                          </td>
                         </tr>
                       );
                     })}
@@ -437,7 +442,12 @@ class Ticket extends React.Component {
                             <tr key={item._id}>
                               <td>{userNames[item.user]}</td>
                               <td>{item.text}</td>
-                              <td>{item.date}</td>
+                              <td>
+                                {' '}
+                                <Moment format='MM/DD/YYYY, h:mm a'>
+                                  {item.date}
+                                </Moment>
+                              </td>
                             </tr>
                           );
                         })}

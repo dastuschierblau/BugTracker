@@ -56,8 +56,6 @@ function getHistory(data) {
       return group;
     }, results);
 
-  console.log(inRangeHistory);
-
   return results;
 }
 
@@ -71,9 +69,3 @@ function getStatuses(data) {
 
   return status;
 }
-
-/*
-let dateStr = "2020-03-07T17:25:28.066Z";
-let date = new Date(dateStr);
-console.log(date);
-*/
