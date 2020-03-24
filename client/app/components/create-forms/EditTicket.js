@@ -5,10 +5,10 @@ export default function EditTicket({
   toggle,
   handleSubmit,
   values,
-  users: { users, idToName }
+  userNames
 }) {
   const { category, priority, status, assignedTo, description } = values;
-  const keys = Object.keys(idToName);
+  const keys = Object.keys(userNames);
 
   return (
     <div className='row mb-5'>
@@ -65,7 +65,7 @@ export default function EditTicket({
                   {keys.map((item, ind) => {
                     return (
                       <option key={ind} value={item}>
-                        {idToName[item]}
+                        {userNames[item]}
                       </option>
                     );
                   })}

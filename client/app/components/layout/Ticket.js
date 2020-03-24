@@ -250,14 +250,11 @@ class Ticket extends React.Component {
     const {
       ticket,
       userNames,
-      users,
       tickets: { loading }
     } = this.props;
 
     if (loading) {
-      return 'Loading...';
-    } else if (!ticket) {
-      return <Redirect to='/dashboard' />;
+      return <Navbar>Loading...</Navbar>;
     }
 
     return (
@@ -312,7 +309,7 @@ class Ticket extends React.Component {
               handleChange={this.handleChange}
               handleSubmit={this.handleSubmit}
               values={this.state.ticket}
-              users={users}
+              userNames={userNames}
               loading={loading}
             />
           </Fragment>
@@ -359,7 +356,7 @@ class Ticket extends React.Component {
 const mapStateToProps = state => ({
   tickets: state.tickets,
   ticket: state.tickets.ticket,
-  users: state.users,
+  users: state.users.users,
   userNames: state.users.idToName
 });
 
