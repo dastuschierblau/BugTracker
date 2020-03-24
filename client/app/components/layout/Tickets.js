@@ -44,7 +44,7 @@ class Tickets extends React.Component {
             <p>{project.description}</p>
             <div className='d-flex justify-content-between'>
               <div>
-                <Moment format='YYYY/MM/DD'>{project.date}</Moment>
+                <Moment format='MM/DD/YYYY'>{project.date}</Moment>
               </div>
               <div>{`Manager: ${manager.name}`}</div>
             </div>

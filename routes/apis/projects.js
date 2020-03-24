@@ -220,10 +220,10 @@ router.get('/:project_id/tickets', auth, async (req, res) => {
   }
 });
 
-// @route   GET api/projects/:project_id/tickets/:ticket_id
+// @route   GET api/tickets/:ticket_id
 // @desc    Get a single ticket with ticket_id
 // @access  All
-router.get('/:project_id/tickets/:ticket_id', auth, async (req, res) => {
+router.get('/tickets/:ticket_id', auth, async (req, res) => {
   const ticketId = req.params.ticket_id;
 
   try {
@@ -236,7 +236,7 @@ router.get('/:project_id/tickets/:ticket_id', auth, async (req, res) => {
   }
 });
 
-// @route  PUT api/projects/tickets/:ticket_id
+// @route  PUT api/tickets/:ticket_id
 // @desc   Edit a ticket
 // @access Admin, project manager, developer
 router.put(

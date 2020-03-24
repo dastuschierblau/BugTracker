@@ -40,46 +40,42 @@ class CreateProject extends React.Component {
 
   render() {
     return (
-      <Navbar>
-        <div className='d-sm-flex flex-column align-items-center justify-content-between my-4'>
-          <div className='card shadow no-border mb-4'>
-            <div className='card-header bg-primary text-white'>
-              <h1>Create a Project</h1>
-            </div>
-            <div className='card-body'>
-              <Alert />
-              <form action='post' className='form'>
-                <div className='form-group'>
-                  <label htmlFor='name'>Name:</label>
-                  <input
-                    type='text'
-                    className='form-control'
-                    onChange={this.handleChange}
-                    name='name'
-                    placeholder='Name the project'
-                  />
-                </div>
-                <div className='form-group'>
-                  <label htmlFor='description'>Description:</label>
-                  <textarea
-                    onChange={this.handleChange}
-                    name='description'
-                    placeholder='Enter a description of the project.'
-                  />
-                </div>
-                <input
-                  type='submit'
-                  className='form-control'
-                  disabled={!this.state.name || !this.state.description}
-                  onClick={this.handleSubmit}
-                  className='btn btn-success'
-                  value='Submit'
-                />
-              </form>
-            </div>
-          </div>
+      <div className='card shadow no-border mb-4'>
+        <div className='card-header bg-primary text-white'>
+          <h1>Create a Project</h1>
         </div>
-      </Navbar>
+        <div className='card-body'>
+          <Alert />
+          <form action='post' className='form'>
+            <div className='form-group'>
+              <label htmlFor='name'>Name:</label>
+              <input
+                type='text'
+                className='form-control'
+                onChange={this.handleChange}
+                name='name'
+                placeholder='Name the project'
+              />
+            </div>
+            <div className='form-group'>
+              <label htmlFor='description'>Description:</label>
+              <textarea
+                onChange={this.handleChange}
+                name='description'
+                placeholder='Enter a description of the project.'
+              />
+            </div>
+            <input
+              type='submit'
+              className='form-control'
+              disabled={!this.state.name || !this.state.description}
+              onClick={this.handleSubmit}
+              className='btn btn-success'
+              value='Submit'
+            />
+          </form>
+        </div>
+      </div>
     );
   }
 }

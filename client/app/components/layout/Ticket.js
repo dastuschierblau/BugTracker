@@ -4,117 +4,51 @@ import Alert from './Alert';
 import { connect } from 'react-redux';
 import {
   getTickets,
-  setTicket,
+  getTicket,
   editTicket,
   addComment
 } from '../../actions/tickets';
+import getChartData from '../../utils/getChartData';
+import EditTicket from '../create-forms/EditTicket';
 import { Redirect } from 'react-router-dom';
-import Moment from 'react-moment';
-
-function EditTicket({ handleChange, toggle, handleSubmit, values }) {
-  const { category, priority, status, assignedTo, description } = values;
-
-  return (
-    <div className='row mb-5'>
-      <div className='col-lg-8 m-auto mb-4'>
-        <div className='card shadow'>
-          <div className='card-header bg-gradient-purple d-flex justify-content-between'>
-            Edit Ticket:
-            <i onClick={toggle} className='fas fa-window-close fa-2x'></i>
-          </div>
-          <div className='card-body'>
-            <form action='post'>
-              <div className='form-group d-flex justify-content-between'>
-                <label>Category:</label>
-                <select
-                  onChange={e => handleChange(e)}
-                  name='category'
-                  value={category.current}
-                >
-                  <option name='category' value='UI'>
-                    UI
-                  </option>
-                  <option name='category' value='Routing'>
-                    Routing
-                  </option>
-                  <option name='category' value='Backend'>
-                    Backend
-                  </option>
-                  <option name='category' value='Redux'>
-                    Redux
-                  </option>
-                  <option name='category' value='UX'>
-                    UX
-                  </option>
-                </select>
-              </div>
-              <div className='form-group d-flex flex-column'>
-                <label>Description:</label>
-                <textarea
-                  name='description'
-                  cols='30'
-                  rows='5'
-                  onChange={e => handleChange(e)}
-                  name='description'
-                  value={description.current}
-                ></textarea>
-              </div>
-              <div className='form-group d-flex justify-content-between'>
-                <label>Assigned To:</label>
-                <select
-                  name='assignedTo'
-                  onChange={e => handleChange(e)}
-                  value={assignedTo.current}
-                >
-                  <option value='Toby Slack'>Toby Slack</option>
-                  <option value='Brett Slack'>Brett Slack</option>
-                  <option value='John Doe'>John Doe</option>
-                  <option value='Emmett Slack'>Emmett Slack</option>
-                </select>
-              </div>
-              <div className='form-group d-flex justify-content-between'>
-                <label>Status:</label>
-                <select
-                  name='status'
-                  value={status.current}
-                  onChange={e => handleChange(e)}
-                >
-                  <option value='Open'>Open</option>
-                  <option value='In progress'>In Progress</option>
-                  <option value='Pending'>Pending Review</option>
-                  <option value='Stuck'>Stuck</option>
-                  <option value='Done'>Done</option>
-                </select>
-              </div>
-              <div className='form-group d-flex justify-content-between'>
-                <label>Priority</label>
-                <select
-                  name='priority'
-                  value={priority.current}
-                  onChange={e => handleChange(e)}
-                >
-                  <option value='low'>Low</option>
-                  <option value='medium'>Medium</option>
-                  <option value='high'>High</option>
-                </select>
-              </div>
-              <input
-                type='submit'
-                className='btn btn-success'
-                value='Submit'
-                onClick={e => handleSubmit(e)}
-              />
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+import moment from 'moment';
+import { MDBDataTable } from 'mdbreact';
 
 function History({ ticket, loading, userNames }) {
+  if (!ticket || loading) {
+    return 'Loading';
+  }
+
+  const data = {
+    columns: [
+      {
+        label: 'User',
+        field: 'user',
+        sort: 'asc'
+      },
+      {
+        label: 'Description',
+        field: 'desc',
+        sort: 'asc'
+      },
+      {
+        label: 'Time',
+        field: 'time',
+        sort: 'asc'
+      }
+    ],
+    rows: ticket.history.map(item => {
+      return {
+        user: userNames[item.user],
+        desc: item.description,
+        time: moment(item.time).format('MM/DD/YYYY HH:mm a')
+      };
+    })
+  };
+
   return (
-    !loading && (
+    !loading &&
+    ticket && (
       <div className='col-lg-8 mb-4'>
         <div className='card shadow'>
           <div className='card-header bg-gradient-purple'>History</div>
@@ -124,45 +58,8 @@ function History({ ticket, loading, userNames }) {
               voluptas officia voluptate omnis error minus rem vero porro
               accusantium quibusdam!
             </p>
-            <div className='table-responsive'>
-              <table
-                className='table table-bordered'
-                id='dataTable2'
-                width='100%'
-                cellSpacing='0'
-              >
-                <thead>
-                  <tr>
-                    <th>User</th>
-                    <th>Description</th>
-                    <th>Time</th>
-                  </tr>
-                </thead>
-                <tfoot>
-                  <tr>
-                    <th>User</th>
-                    <th>Description</th>
-                    <th>Time</th>
-                  </tr>
-                </tfoot>
-                <tbody>
-                  {ticket &&
-                    ticket.history.map((item, index) => {
-                      return (
-                        <tr key={item._id}>
-                          <td>{userNames[item.user]}</td>
-                          <td>{item.description}</td>
-                          <td>
-                            <Moment format='MM/DD/YYYY, h:mm a'>
-                              {item.time}
-                            </Moment>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                </tbody>
-              </table>
-            </div>
+
+            <MDBDataTable scrollX striped data={data} />
           </div>
         </div>
       </div>
@@ -189,6 +86,39 @@ function AddComment({ text, handleChange, handleSubmit, loading }) {
       </div>
     )
   );
+}
+
+function Comments({ ticket, userNames, loading }) {
+  if (!ticket || loading) {
+    return 'Loading';
+  }
+
+  const data = {
+    columns: [
+      {
+        label: 'User',
+        field: 'user'
+      },
+      {
+        label: 'Comment',
+        field: 'text'
+      },
+      {
+        label: 'Time',
+        field: 'time',
+        sort: 'asc'
+      }
+    ],
+    rows: ticket.comments.map(item => {
+      return {
+        user: userNames[item.user],
+        text: item.text,
+        time: moment(item.date).format('MM/DD/YYYY HH:mm a')
+      };
+    })
+  };
+
+  return <MDBDataTable scrollX data={data} />;
 }
 
 class Ticket extends React.Component {
@@ -230,8 +160,32 @@ class Ticket extends React.Component {
   }
 
   toggleEdit() {
+    const { ticket } = this.props;
+
     this.setState(prevState => ({
-      editTicket: !prevState.editTicket
+      editTicket: !prevState.editTicket,
+      ticket: {
+        category: {
+          ...prevState.category,
+          current: ticket.category
+        },
+        description: {
+          ...prevState.description,
+          current: ticket.description
+        },
+        priority: {
+          ...prevState.priority,
+          current: ticket.priority
+        },
+        status: {
+          ...prevState.status,
+          current: ticket.status
+        },
+        assignedTo: {
+          ...prevState.assignedTo,
+          current: ticket.assignedTo
+        }
+      }
     }));
   }
 
@@ -288,48 +242,21 @@ class Ticket extends React.Component {
 
   componentDidMount() {
     const { ticketId } = this.props.match.params;
-    const { tickets } = this.props.tickets;
 
-    if (tickets.length !== 0) {
-      const ticket = this.props.tickets.tickets.filter(item => {
-        return item._id === ticketId;
-      })[0];
-
-      this.props.setTicket(ticket);
-
-      this.setState(prevState => ({
-        ticket: {
-          category: {
-            ...prevState.category,
-            current: ticket.category
-          },
-          description: {
-            ...prevState.description,
-            current: ticket.description
-          },
-          priority: {
-            ...prevState.priority,
-            current: ticket.priority
-          },
-          status: {
-            ...prevState.status,
-            current: ticket.status
-          },
-          assignedTo: {
-            ...prevState.assignedTo,
-            current: ticket.assignedTo
-          }
-        }
-      }));
-    }
+    this.props.getTicket(ticketId);
   }
 
   render() {
-    const { ticket } = this.props,
-      { loading } = this.props.tickets,
-      { userNames } = this.props;
+    const {
+      ticket,
+      userNames,
+      users,
+      tickets: { loading }
+    } = this.props;
 
-    if (this.props.tickets.tickets.length === 0) {
+    if (loading) {
+      return 'Loading...';
+    } else if (!ticket) {
       return <Redirect to='/dashboard' />;
     }
 
@@ -339,7 +266,7 @@ class Ticket extends React.Component {
 
         <h1 className='h3 mb-3 text-gray-800 my-3'>Ticket</h1>
         <div className='row p-sm-4 mb-3 d-flex justify-content-center'>
-          <img src='../../img/searching.svg' alt='Project building' />
+          <i className='fab fa-react fa-4x text-primary'></i>
         </div>
 
         <div className='row my-3'>
@@ -385,7 +312,7 @@ class Ticket extends React.Component {
               handleChange={this.handleChange}
               handleSubmit={this.handleSubmit}
               values={this.state.ticket}
-              userNames={userNames}
+              users={users}
               loading={loading}
             />
           </Fragment>
@@ -414,46 +341,11 @@ class Ticket extends React.Component {
                   loading={loading}
                 />
 
-                <div className='table-responsive'>
-                  <table
-                    className='table table-bordered'
-                    id='dataTable3'
-                    width='100%'
-                    cellSpacing='0'
-                  >
-                    <thead>
-                      <tr>
-                        <th>User</th>
-                        <th>Comment</th>
-                        <th>Time</th>
-                      </tr>
-                    </thead>
-                    <tfoot>
-                      <tr>
-                        <th>User</th>
-                        <th>Comment</th>
-                        <th>Time</th>
-                      </tr>
-                    </tfoot>
-                    <tbody>
-                      {ticket &&
-                        ticket.comments.map(item => {
-                          return (
-                            <tr key={item._id}>
-                              <td>{userNames[item.user]}</td>
-                              <td>{item.text}</td>
-                              <td>
-                                {' '}
-                                <Moment format='MM/DD/YYYY, h:mm a'>
-                                  {item.date}
-                                </Moment>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                    </tbody>
-                  </table>
-                </div>
+                <Comments
+                  ticket={ticket}
+                  userNames={userNames}
+                  loading={loading}
+                />
               </div>
             </div>
           </div>
@@ -467,13 +359,13 @@ class Ticket extends React.Component {
 const mapStateToProps = state => ({
   tickets: state.tickets,
   ticket: state.tickets.ticket,
-  users: state.users.users,
+  users: state.users,
   userNames: state.users.idToName
 });
 
 export default connect(mapStateToProps, {
   getTickets,
-  setTicket,
+  getTicket,
   editTicket,
   addComment
 })(Ticket);

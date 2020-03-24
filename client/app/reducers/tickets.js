@@ -36,7 +36,8 @@ export default function tickets(state = initialState, action) {
     case SET_TICKET:
       return {
         ...state,
-        ticket: payload
+        ticket: payload,
+        loading: false
       };
     case EDIT_TICKET:
       return {

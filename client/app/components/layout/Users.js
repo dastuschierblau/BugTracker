@@ -53,7 +53,11 @@ class Users extends React.Component {
   }
 
   render() {
-    const { loading, users } = this.props.users;
+    const {
+      users: { loading, users },
+      currentUser,
+      authloading
+    } = this.props;
 
     return (
       <Navbar>
@@ -116,54 +120,60 @@ class Users extends React.Component {
                 <div className='card-header bg-gradient-purple'>Edit User</div>
                 <div className='card-body'>
                   <Alert />
-                  <form action='post'>
-                    <div className='form-group d-flex justify-content-between'>
-                      <label>User:</label>
-                      <select
-                        name='user'
-                        className='form-control'
-                        defaultValue='none'
-                        onChange={this.handleSelect}
-                      >
-                        <option value='none' disabled>
-                          Select a User
-                        </option>
-                        {users.map((item, ind) => {
-                          return (
-                            <option key={ind} value={item._id}>
-                              {item.name}
-                            </option>
-                          );
-                        })}
-                      </select>
-                    </div>
+                  {!authloading && currentUser.role === 'admin' ? (
+                    <form action='post'>
+                      <div className='form-group d-flex justify-content-between'>
+                        <label>User:</label>
+                        <select
+                          name='user'
+                          className='form-control'
+                          defaultValue='none'
+                          onChange={this.handleSelect}
+                        >
+                          <option value='none' disabled>
+                            Select a User
+                          </option>
+                          {users.map((item, ind) => {
+                            return (
+                              <option key={ind} value={item._id}>
+                                {item.name}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </div>
 
-                    <div className='form-group'>
-                      <label className='d-flex align-items-center'>Role:</label>
-                      <select
-                        name='role'
-                        defaultValue='none'
-                        className='form-control'
-                        onChange={this.handleSelect}
-                      >
-                        <option value='none' disabled>
-                          Select a Role
-                        </option>
-                        <option value='developer'>Developer</option>
-                        <option value='manager'>Project Manager</option>
-                        <option value='admin'>Admin</option>
-                        <option value='guest'>Guest</option>
-                      </select>
-                    </div>
+                      <div className='form-group'>
+                        <label className='d-flex align-items-center'>
+                          Role:
+                        </label>
+                        <select
+                          name='role'
+                          defaultValue='none'
+                          className='form-control'
+                          onChange={this.handleSelect}
+                        >
+                          <option value='none' disabled>
+                            Select a Role
+                          </option>
+                          <option value='developer'>Developer</option>
+                          <option value='manager'>Project Manager</option>
+                          <option value='admin'>Admin</option>
+                          <option value='guest'>Guest</option>
+                        </select>
+                      </div>
 
-                    <input
-                      type='submit'
-                      disabled={!this.state.role || !this.state.user}
-                      className='btn btn-success'
-                      value='Submit'
-                      onClick={this.changeUserRole}
-                    ></input>
-                  </form>
+                      <input
+                        type='submit'
+                        disabled={!this.state.role || !this.state.user}
+                        className='btn btn-success'
+                        value='Submit'
+                        onClick={this.changeUserRole}
+                      ></input>
+                    </form>
+                  ) : (
+                    <h2>Admin Only</h2>
+                  )}
                 </div>
               </div>
             </div>
@@ -177,7 +187,8 @@ class Users extends React.Component {
 
 const mapStateToProps = state => ({
   users: state.users,
-  currentUser: state.auth.user
+  currentUser: state.auth.user,
+  authloading: state.auth.loading
 });
 
 export default connect(mapStateToProps, { getUsers, editUser, setAlert })(

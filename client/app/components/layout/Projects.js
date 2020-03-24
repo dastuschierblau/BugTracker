@@ -4,6 +4,7 @@ import Navbar from './Navbar';
 import Alert from './Alert';
 import Tickets from './Tickets';
 import Loading from './Loading';
+import CreateProject from '../create-forms/CreateProject';
 import { connect } from 'react-redux';
 import { getProjects } from '../../actions/projects';
 import { getUsers } from '../../actions/users';
@@ -15,7 +16,8 @@ class Projects extends React.Component {
     super(props);
 
     this.state = {
-      selectedProject: null
+      selectedProject: null,
+      createProject: false
     };
 
     this.checkAuthorized = this.checkAuthorized.bind(this);
@@ -26,15 +28,16 @@ class Projects extends React.Component {
     this.props.getUsers();
   }
 
-  checkAuthorized(e) {
-    const { user } = this.props.auth;
-
+  checkAuthorized(user) {
     if (user.role !== 'admin' && user.role !== 'manager') {
-      e.preventDefault();
       this.props.setAlert(
         'Not Authorized. You must be an admin or project manager to access this functionality.',
         'danger'
       );
+    } else {
+      this.setState(prevState => ({
+        createProject: !prevState.createProject
+      }));
     }
   }
 
@@ -62,14 +65,15 @@ class Projects extends React.Component {
                 </div>
 
                 <Alert />
-                <Link
-                  to='/create-project'
-                  onClick={this.checkAuthorized}
-                  className='d-flex justify-content-center align-items-center mb-3 btn btn-success'
-                  style={{ width: '50%', margin: '0 auto' }}
+                <button
+                  className='btn btn-success mb-2'
+                  onClick={() => {
+                    this.checkAuthorized(user);
+                  }}
                 >
-                  Add a Project
-                </Link>
+                  Create a Project
+                </button>
+                {this.state.createProject && <CreateProject user={user} />}
 
                 <div className='row'>
                   {!loading &&
@@ -102,7 +106,7 @@ class Projects extends React.Component {
                             <p>{item.description}</p>
                             <div className='d-flex justify-content-between'>
                               <div>
-                                <Moment format='YYYY/MM/DD'>{item.date}</Moment>
+                                <Moment format='MM/DD/YYYY'>{item.date}</Moment>
                               </div>
                               <div>
                                 Manager:{' '}

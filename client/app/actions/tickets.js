@@ -47,6 +47,23 @@ export const getAllTickets = () => async dispatch => {
   }
 };
 
+// Get a single ticket by ticketId
+export const getTicket = ticketId => async dispatch => {
+  try {
+    let res = await axios.get(`${baseUrl}/api/projects/tickets/${ticketId}`);
+
+    dispatch({
+      type: SET_TICKET,
+      payload: res.data
+    });
+  } catch (err) {
+    dispatch({
+      type: TICKETS_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
 // Set a ticket as current ticket:
 export const setTicket = ticket => dispatch => {
   dispatch({
